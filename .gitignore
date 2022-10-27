@@ -1,9 +1,3 @@
-Packages
-.build
-xcuserdata
-*.xcodeproj
-DerivedData/
+Package.resolved
 .DS_Store
-db.sqlite
 .swiftpm
-.env
