@@ -1,7 +1,7 @@
 # ================================
 # Build image
 # ================================
-FROM swift:5.6-focal as build
+FROM swift:5.7-focal as build
 
 # Install OS updates and, if needed, sqlite3
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
@@ -19,11 +19,17 @@ WORKDIR /build
 COPY ./Package.* ./
 RUN swift package resolve
 
-# Copy entire repo into container
-COPY . .
+# Copy swift sources into container
+COPY Public/ ./Public/
+COPY Resources/ ./Resources/
+COPY Sources/ ./Sources/
+COPY Tests/ ./Tests/
 
 # Build everything, with optimizations
 RUN swift build -c release --static-swift-stdlib
+
+# Copy configs
+COPY nginx/ .
 
 # Switch to the staging area
 WORKDIR /staging
