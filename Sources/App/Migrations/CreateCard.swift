@@ -9,7 +9,7 @@ import Fluent
 
 struct CreateCard: AsyncMigration {
     func prepare(on database: Database) async throws {
-        try await database.schema("cards")
+        try await database.schema(Card.schema)
             .id()
             .field("title", .string, .required)
             .field("created_at", .datetime)
@@ -17,6 +17,6 @@ struct CreateCard: AsyncMigration {
     }
 
     func revert(on database: Database) async throws {
-        try await database.schema("cards").delete()
+        try await database.schema(Card.schema).delete()
     }
 }

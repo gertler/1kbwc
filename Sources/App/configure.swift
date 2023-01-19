@@ -25,6 +25,7 @@ public func configure(_ app: Application) throws {
     addMigrations(app: app)
 
     app.views.use(.leaf)
+    app.passwords.use(.bcrypt)
 
     // register routes
     try routes(app)
@@ -32,4 +33,5 @@ public func configure(_ app: Application) throws {
 
 private func addMigrations(app: Application) {
     app.migrations.add(CreateCard())
+    app.migrations.add(CreateUser())
 }
