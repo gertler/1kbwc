@@ -11,4 +11,5 @@ func routes(_ app: Application) throws {
     }
 
     try app.register(collection: CardController())
+    try app.register(collection: UserController())
 }
