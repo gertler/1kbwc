@@ -8,6 +8,8 @@ public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     
+    // Get the db password from environment variable
+    // This is done this way to work with docker compose secrets, which reads from files, not Strings
     let dbPasswordFilename = Environment.get("DATABASE_PASSWORD_FILE") ?? ""
     let dbPasswordFile = URL.init(fileURLWithPath: dbPasswordFilename)
     let dbPassword = try String.init(contentsOf: dbPasswordFile)
@@ -20,10 +22,14 @@ public func configure(_ app: Application) throws {
         database: Environment.get("DATABASE_NAME") ?? ""
     ), as: .psql)
 
-    app.migrations.add(CreateTodo())
+    addMigrations(app: app)
 
     app.views.use(.leaf)
 
     // register routes
     try routes(app)
+}
+
+private func addMigrations(app: Application) {
+    app.migrations.add(CreateCard())
 }
