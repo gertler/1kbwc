@@ -33,6 +33,9 @@ services:
     environment:
       <<: *shared_environment
       DATABASE_PASSWORD_FILE: /run/secrets/pg-password
+      AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
+      AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
+      S3_BUCKET_NAME: 1kbwc-dev
     depends_on:
       - db
     networks:
@@ -43,6 +46,8 @@ services:
     command: ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
     secrets:
       - pg-password
+      - aws-access-key
+      - aws-secret-access-key
   migrate:
     image: 1kbwc:latest
     build:
@@ -110,3 +115,7 @@ networks:
 secrets:
   pg-password:
     file: ./secrets/pg_password.txt
+  aws-access-key:
+    file: ./secrets/aws_access_key.txt
+  aws-secret-access-key:
+    file: ./secrets/aws_secret_access_key.txt

@@ -6,8 +6,9 @@ func routes(_ app: Application) throws {
         try await req.view.render("index", ["title": "Hello Vapor!"])
     }
 
-    app.get("hello") { req async -> String in
-        "Hello, world!"
+    app.get("hello") { req async throws -> String in
+        try await req.awsConfig.testUpload()
+        return "Hello, world!"
     }
 
     try app.register(collection: CardController())
