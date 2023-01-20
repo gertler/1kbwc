@@ -1,0 +1,9 @@
+{
+  "name": "1kbwc",
+  "version": "1.0.0",
+  "description": "Vapor swift server on docker",
+  "license": "ISC",
+  "dependencies": {
+    "literallycanvas": "^0.5.2"
+  }
+}

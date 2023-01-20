@@ -1,4 +1,18 @@
 # ================================
+# Node layer
+# ================================
+FROM node:latest as node-deps
+
+# Set up a build area
+WORKDIR /app
+
+# Copy nodejs dependencies files
+COPY ["package.json", "package-lock.json*", "./"]
+
+# Install nodejs dependencies
+RUN npm install
+
+# ================================
 # Build image
 # ================================
 FROM swift:5.7-focal as build
@@ -18,6 +32,9 @@ WORKDIR /build
 # files do not change.
 COPY ./Package.* ./
 RUN swift package resolve
+
+# Copy node dependencies into Public/static
+COPY --from=node-deps /app/node_modules/ ./Public/static/
 
 # Copy swift sources into container
 COPY Public/ ./Public/
@@ -57,7 +74,6 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q install -y \
       ca-certificates \
       tzdata \
-      npm \
 # If your app or its dependencies import FoundationNetworking, also install `libcurl4`.
       # libcurl4 \
 # If your app or its dependencies import FoundationXML, also install `libxml2`.

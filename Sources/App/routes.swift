@@ -7,7 +7,7 @@ func routes(_ app: Application) throws {
     }
 
     app.get("hello") { req async throws -> String in
-        try await req.awsConfig.testUpload()
+//        try await req.awsConfig.testUpload()
         return "Hello, world!"
     }
 
