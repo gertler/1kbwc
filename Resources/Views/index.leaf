@@ -2,11 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  
+  <link rel="stylesheet" type="text/css" href="/static/css/index.css">
 
   <title>#(title)</title>
+  
+  <script src="/static/fabric/dist/fabric.js"></script>
+  <script src="/static/js/index.js"></script>
+  <script src="/static/js/buttons.js"></script>
 </head>
 
 <body>
   <h1>#(title)</h1>
+  
+  <button onclick="toggleFreeDraw()">Change Free Draw</button>
+  </br>
+  
+  <button id="toggleStroke1">
+    <canvas id="stroke1" width="30" height="30"></canvas>
+  </button>
+  <button id="toggleStroke2">
+    <canvas id="stroke2" width="30" height="30"></canvas>
+  </button>
+  <button id="toggleStroke3">
+    <canvas id="stroke3" width="30" height="30"></canvas>
+  </button>
+  <button id="toggleStroke4">
+    <canvas id="stroke4" width="30" height="30"></canvas>
+  </button>
+  </br>
+  
+  <canvas id="canvas" class="main" width="409" height="585" style="border:1px solid #000000;"></canvas>
+
+
 </body>
 </html>
