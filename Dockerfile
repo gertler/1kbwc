@@ -37,13 +37,15 @@ RUN swift package resolve
 COPY --from=node-deps /app/node_modules/ ./Public/static/
 
 # Copy swift sources into container
-COPY Public/ ./Public/
-COPY Resources/ ./Resources/
 COPY Sources/ ./Sources/
 COPY Tests/ ./Tests/
 
 # Build everything, with optimizations
 RUN swift build -c release --static-swift-stdlib
+
+# Copy HTML/CSS/JS sources
+COPY Public/ ./Public/
+COPY Resources/ ./Resources/
 
 # Copy configs
 COPY nginx/ .
