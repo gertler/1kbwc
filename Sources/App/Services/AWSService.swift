@@ -8,7 +8,7 @@
 import Vapor
 import SotoS3
 
-struct AWSConfig {
+struct AWSService {
     private let awsClient: AWSClient? = {
         // Access Key ID from text file
         let accessKeyIDFilename = Environment.get("AWS_ACCESS_KEY_FILE") ?? ""
@@ -27,6 +27,8 @@ struct AWSConfig {
     
     private var s3: S3?
     
+    private let bucketName: String? = Environment.get("AWS_BUCKET_NAME")
+    
     func testUpload() async throws {
         guard let bucketName = Environment.get("S3_BUCKET_NAME") else {
             throw Abort(.imATeapot)
@@ -41,6 +43,39 @@ struct AWSConfig {
         _ = try await s3?.putObject(putObjectRequest)
     }
     
+    /**
+     * Attempts to upload a given card with data and title to the configured S3 bucket
+     *
+     * - parameter cardDataBuffer:  The card data ByteBuffer object to upload
+     * - parameter cardTitle:       The card's title given by the client
+     * - parameter logger:          An optional logger to use
+     * - returns:                   The filepath String in the S3 bucket where the file is stored
+     */
+    func uploadPNG(_ cardDataBuffer: ByteBuffer, cardTitle title: String, logger: Logger? = nil) async throws -> String {
+        let key = formatDateKey(title)
+        let size = ByteCountFormatter().string(fromByteCount: Int64(cardDataBuffer.readableBytes))
+        logger?.debug("Begin to upload file \(key); size: \(size)")
+        
+        let putObjectRequest = S3.PutObjectRequest(
+            body: .byteBuffer(cardDataBuffer),
+            bucket: bucketName!,
+            key: key
+        )
+        let output = try await s3?.putObject(putObjectRequest)
+        logger?.debug("Successfully uploaded file! ETag: \(output?.eTag ?? "")")
+        
+        return key
+    }
+    
+    private func formatDateKey(_ key: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY/MM/dd"
+        let path = dateFormatter.string(from: Date())
+        dateFormatter.dateFormat = "HH_mm_ss"
+        let suffix = dateFormatter.string(from: Date())
+        return "\(path)/\(key)\(suffix).png"
+    }
+    
     init() {
         if let client = awsClient {
             s3 = S3(client: client, region: .useast1)
@@ -49,7 +84,7 @@ struct AWSConfig {
 }
 
 extension Request {
-    var awsConfig: AWSConfig {
+    var awsService: AWSService {
         .init()
     }
 }

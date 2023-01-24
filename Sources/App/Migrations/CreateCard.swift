@@ -12,6 +12,7 @@ struct CreateCard: AsyncMigration {
         try await database.schema(Card.schema)
             .id()
             .field("title", .string, .required)
+            .field("s3Filepath", .string)
             .field("created_at", .datetime)
             .create()
     }

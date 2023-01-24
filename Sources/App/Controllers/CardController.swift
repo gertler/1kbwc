@@ -12,7 +12,7 @@ struct CardController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let cards = routes.grouped("cards")
         cards.get(use: index)
-        cards.post(use: create)
+        cards.on(.POST, use: create)
         cards.group(":cardID") { card in
             card.delete(use: delete)
         }
@@ -23,8 +23,16 @@ struct CardController: RouteCollection {
     }
 
     func create(req: Request) async throws -> Card {
-        let card = try req.content.decode(Card.self)
+        let card = try req.query.decode(Card.self)
+        
+        // Try to upload file to S3
+        let cardDataBuffer = req.body.data!
+        let key = try await req.awsService.uploadPNG(cardDataBuffer, cardTitle: card.title, logger: req.logger)
+        card.s3Filepath = key
+        
+        // Try to save card in db
         try await card.save(on: req.db)
+        
         return card
     }
 
