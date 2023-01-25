@@ -9,6 +9,7 @@ import Vapor
 import SotoS3
 
 struct AWSService {
+    /// The AWSClient object used to generate AWS Service instances like `S3`
     private let awsClient: AWSClient? = {
         // Access Key ID from text file
         let accessKeyIDFilename = Environment.get("AWS_ACCESS_KEY_FILE") ?? ""
@@ -25,23 +26,11 @@ struct AWSService {
         return client
     }()
     
+    /// The `S3` object used to send requests such as `PutObjectRequest`
     private var s3: S3?
     
+    /// The name of the S3 bucket used to store data
     private let bucketName: String? = Environment.get("S3_BUCKET_NAME")
-    
-    func testUpload() async throws {
-        guard let bucketName = Environment.get("S3_BUCKET_NAME") else {
-            throw Abort(.imATeapot)
-        }
-        let lorumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed..."
-        let putObjectRequest = S3.PutObjectRequest(
-            body: .string(lorumText),
-            bucket: bucketName,
-            key: "lorum.txt"
-        )
-        
-        _ = try await s3?.putObject(putObjectRequest)
-    }
     
     /**
      * Attempts to upload a given card with data and title to the configured S3 bucket
@@ -67,6 +56,13 @@ struct AWSService {
         return key
     }
     
+    /**
+     * Formats a given key to prepare for S3 storage
+     *
+     * The key is prefixed with a date string and suffixed with a time string.
+     * - parameter key: The key to format
+     * - returns:       The formatted String with datetime timestamp information
+     */
     private func formatDateKey(_ key: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY/MM/dd"
@@ -84,6 +80,7 @@ struct AWSService {
 }
 
 extension Request {
+    /// A service for connecting to AWS and sending requests
     var awsService: AWSService {
         .init()
     }

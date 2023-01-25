@@ -26,7 +26,10 @@ struct CardController: RouteCollection {
         let card = try req.query.decode(Card.self)
         
         // Try to upload file to S3
-        let cardDataBuffer = req.body.data!
+        guard let cardDataBuffer = req.body.data else {
+            req.logger.warning("No body data in request")
+            throw Abort(.badRequest)
+        }
         let key = try await req.awsService.uploadPNG(cardDataBuffer, cardTitle: card.title, logger: req.logger)
         card.s3Filepath = key
         

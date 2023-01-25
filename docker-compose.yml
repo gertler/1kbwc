@@ -22,8 +22,6 @@ volumes:
 x-shared_environment: &shared_environment
   LOG_LEVEL: ${LOG_LEVEL:-debug}
   DATABASE_HOST: db
-  DATABASE_NAME: vapor_database
-  DATABASE_USERNAME: vapor_username
   
 services:
   app:
@@ -32,6 +30,8 @@ services:
       context: .
     environment:
       <<: *shared_environment
+      DATABASE_NAME_FILE: /run/secrets/pg-database
+      DATABASE_USERNAME_FILE: /run/secrets/pg-user
       DATABASE_PASSWORD_FILE: /run/secrets/pg-password
       AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
       AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
@@ -40,13 +40,15 @@ services:
       - db
     networks:
       - backend
-    # commented out to not expose port around nginx reverse proxy
+    # commented out to not expose port circumventing nginx reverse proxy
 #    ports:
 #      - '8080:8080'
     # user: '0' # uncomment to run as root for testing purposes even though Dockerfile defines 'vapor' user.
     command: ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
     secrets:
+      - pg-user
       - pg-password
+      - pg-database
       - aws-access-key
       - aws-secret-access-key
   migrate:
@@ -89,13 +91,15 @@ services:
       - db_data:/var/lib/postgresql/data/pgdata
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: vapor_username
+      POSTGRES_USER_FILE: /run/secrets/pg-user
       POSTGRES_PASSWORD_FILE: /run/secrets/pg-password
-      POSTGRES_DB: vapor_database
+      POSTGRES_DB_FILE: /run/secrets/pg-database
     ports:
       - '5432:5432'
     secrets:
+      - pg-user
       - pg-password
+      - pg-database
   nginx:
     image: my-nginx:latest
     build:
@@ -114,8 +118,12 @@ networks:
     backend:
 
 secrets:
+  pg-user:
+    file: ./secrets/pg_user.txt
   pg-password:
     file: ./secrets/pg_password.txt
+  pg-database:
+    file: ./secrets/pg_database.txt
   aws-access-key:
     file: ./secrets/aws_access_key.txt
   aws-secret-access-key:

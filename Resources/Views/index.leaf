@@ -8,9 +8,9 @@
     <title>#(title)</title>
     
     <script src="/static/fabric/dist/fabric.js"></script>
-    <script src="/static/js/index.js"></script>
-    <script src="/static/js/buttons.js"></script>
+    <script src="/static/js/addons.js"></script>
     <script src="/static/js/submit.js"></script>
+    <script src="/static/js/index.js"></script>
 </head>
 
 <body>
@@ -19,17 +19,20 @@
     <button onclick="toggleFreeDraw()">Change Free Draw</button>
     </br>
     
-    <button id="toggleStroke1">
-        <canvas id="stroke1" width="30" height="30"></canvas>
+    <button id="toggleStrokeWidth1" class="toggle-stroke-width toggle-stroke-width-1">
+        <canvas id="strokeWidth1" class="stroke-width-shape" width="30" height="30"></canvas>
     </button>
-    <button id="toggleStroke2">
-        <canvas id="stroke2" width="30" height="30"></canvas>
+    <button id="toggleStrokeWidth2" class="toggle-stroke-width toggle-stroke-width-2">
+        <canvas id="strokeWidth2" class="stroke-width-shape" width="30" height="30"></canvas>
     </button>
-    <button id="toggleStroke3">
-        <canvas id="stroke3" width="30" height="30"></canvas>
+    <button id="toggleStrokeWidth3" class="toggle-stroke-width toggle-stroke-width-3">
+        <canvas id="strokeWidth3" class="stroke-width-shape" width="30" height="30"></canvas>
     </button>
-    <button id="toggleStroke4">
-        <canvas id="stroke4" width="30" height="30"></canvas>
+    <button id="toggleStrokeWidth4" class="toggle-stroke-width toggle-stroke-width-4">
+        <canvas id="strokeWidth4" class="stroke-width-shape" width="30" height="30"></canvas>
+    </button>
+    <button id="toggleStrokeWidth5" class="toggle-stroke-width toggle-stroke-width-5">
+        <canvas id="strokeWidth5" class="stroke-width-shape" width="30" height="30"></canvas>
     </button>
     </br>
     

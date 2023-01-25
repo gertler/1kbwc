@@ -1,7 +1,7 @@
 # ================================
 # Node layer
 # ================================
-FROM node:latest as node-deps
+FROM node:lts-alpine as node-deps
 
 # Set up a build area
 WORKDIR /app
