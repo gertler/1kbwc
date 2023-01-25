@@ -27,7 +27,7 @@ struct AWSService {
     
     private var s3: S3?
     
-    private let bucketName: String? = Environment.get("AWS_BUCKET_NAME")
+    private let bucketName: String? = Environment.get("S3_BUCKET_NAME")
     
     func testUpload() async throws {
         guard let bucketName = Environment.get("S3_BUCKET_NAME") else {
@@ -73,7 +73,7 @@ struct AWSService {
         let path = dateFormatter.string(from: Date())
         dateFormatter.dateFormat = "HH_mm_ss"
         let suffix = dateFormatter.string(from: Date())
-        return "\(path)/\(key)\(suffix).png"
+        return "\(path)/\(key)_\(suffix).png"
     }
     
     init() {
