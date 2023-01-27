@@ -3,12 +3,11 @@ import Vapor
 
 func routes(_ app: Application) throws {
     app.get { req async throws in
-        try await req.view.render("index", ["title": "Hello Vapor!"])
+        try await req.view.render("index", ["title": "Hello Index!"])
     }
-
-    app.get("hello") { req async throws -> String in
-//        try await req.awsConfig.testUpload()
-        return "Hello, world!"
+    
+    app.get("create") { req async throws in
+        try await req.view.render("create", ["title": "Create a Card"])
     }
 
     try app.register(collection: CardController())

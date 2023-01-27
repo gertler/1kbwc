@@ -1,0 +1,57 @@
+#extend("main"):
+    #export("head"):
+        <link rel="stylesheet" type="text/css" href="/static/css/modal.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/addons.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/create.css">
+
+        <script src="/static/fabric/dist/fabric.js"></script>
+        <script src="/static/js/modal.js"></script>
+        <script src="/static/js/addons.js"></script>
+        <script src="/static/js/submit.js"></script>
+        <script src="/static/js/index.js"></script>
+    #endexport
+    #export("body"):
+        <h1>#(title)</h1>
+
+        <label for="title-input">Card Title</label>
+        <input id="title-input" type="text">
+        </br></br>
+        
+        <button id="toggle-free-draw" onclick="toggleFreeDraw()">Toggle Free Draw</button>
+        </br></br>
+        
+        <button id="toggleStrokeWidth1" class="toggle-stroke-width toggle-stroke-width-1">
+            <canvas id="strokeWidth1" class="stroke-width-shape" width="30" height="30"></canvas>
+        </button>
+        <button id="toggleStrokeWidth2" class="toggle-stroke-width toggle-stroke-width-2">
+            <canvas id="strokeWidth2" class="stroke-width-shape" width="30" height="30"></canvas>
+        </button>
+        <button id="toggleStrokeWidth3" class="toggle-stroke-width toggle-stroke-width-3">
+            <canvas id="strokeWidth3" class="stroke-width-shape" width="30" height="30"></canvas>
+        </button>
+        <button id="toggleStrokeWidth4" class="toggle-stroke-width toggle-stroke-width-4">
+            <canvas id="strokeWidth4" class="stroke-width-shape" width="30" height="30"></canvas>
+        </button>
+        <button id="toggleStrokeWidth5" class="toggle-stroke-width toggle-stroke-width-5">
+            <canvas id="strokeWidth5" class="stroke-width-shape" width="30" height="30"></canvas>
+        </button>
+        <input id="color-picker-1" type="color"><label for="color-picker-1">Stroke Color</label>
+        <input id="color-picker-2" type="color"><label for="color-picker-1">Fill Color</label>
+        </br>
+        
+        <canvas id="canvas" class="main" width="409" height="585" style="border:1px solid #000000;"></canvas>
+        </br></br>
+        
+        <div id="submission-div">
+            <div id="submit-spinner" class="spinner"></div>
+            <button id="upload-button" class="upload-button">Upload Card</button>
+        </div>
+        </br></br>
+
+        <button id="test-modal-button">Test Modal Open</button>
+        <div id="test-modal">
+            <p>Hello test test</p>
+            <p>World</p>
+        </div>
+    #endexport
+#endextend

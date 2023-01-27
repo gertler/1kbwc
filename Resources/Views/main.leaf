@@ -1,6 +1,19 @@
+<!doctype html>
 <html lang="en-US">
     <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+        #import("head")
         <title>#(title)</title>
     </head>
-    <body>#import("body")</body>
+    <body>
+        <header>
+            <ul class="header-list">
+                <li class="header-list-item"><a class="active" href="/">Home</a></li>
+                <li class="header-list-item"><a href="/create">Create</a></li>
+                <li class="header-list-item"><a href="/about">About</a></li>
+            </ul>
+        </header>
+        #import("body")
+    </body>
 </html>
