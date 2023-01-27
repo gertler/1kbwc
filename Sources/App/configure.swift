@@ -34,7 +34,7 @@ public func configure(_ app: Application) throws {
 
     app.views.use(.leaf)
     app.passwords.use(.bcrypt)
-    app.routes.defaultMaxBodySize = "500kb"
+//    app.routes.defaultMaxBodySize = "16kb"
 
     // register routes
     try routes(app)

@@ -12,7 +12,7 @@ struct CardController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let cards = routes.grouped("cards")
         cards.get(use: index)
-        cards.on(.POST, use: create)
+        cards.on(.POST, body: .collect(maxSize: "1mb"), use: create)
         cards.group(":cardID") { card in
             card.delete(use: delete)
         }

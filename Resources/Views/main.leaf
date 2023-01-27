@@ -1,0 +1,6 @@
+<html lang="en-US">
+    <head>
+        <title>#(title)</title>
+    </head>
+    <body>#import("body")</body>
+</html>

@@ -1,4 +1,7 @@
 const strokeWidths = [2, 6, 10, 14, 20];
+var colorPicker1;
+var colorPicker2;
+var testModal;
 
 function drawStaticBrushCircle(canvas, diameter) {
     const ctx = canvas.getContext('2d');
@@ -11,9 +14,28 @@ function drawStaticBrushCircle(canvas, diameter) {
     ctx.fillStyle = 'black';
     ctx.fill();
     ctx.stroke();
-  }
+}
 
-function initAddons() {
+function toggleStrokeWidth(width) {
+    const brush = canvas.freeDrawingBrush;
+    brush.width = width;
+}
+
+function initColorPicker(canvas) {
+    const brush = canvas.freeDrawingBrush;
+    colorPicker1 = document.getElementById("color-picker-1");
+    colorPicker1.addEventListener("change", (event) => {
+        brush.color = event.target.value;
+    });
+    colorPicker2 = document.getElementById("color-picker-2");
+    colorPicker2.addEventListener("change", (event) => {
+        console.log("TODO: Change fill color after adding support for shapes.");
+    });
+}
+
+function initAddons(canvas) {
+    // Init stroke width buttons
+    canvas.freeDrawingBrush.width = strokeWidths[0];
     const btns = document.getElementsByClassName("toggle-stroke-width");
     var i = 0;
     for (const btn of btns) {
@@ -25,4 +47,8 @@ function initAddons() {
         drawStaticBrushCircle(cvs, width);
         i++;
     }
+
+    initColorPicker(canvas);
+    const testModalButton = document.getElementById("test-modal-button");
+    testModal = new Modal("test-modal", "My Title", testModalButton);
 }
