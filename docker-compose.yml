@@ -22,6 +22,9 @@ volumes:
 x-shared_environment: &shared_environment
   LOG_LEVEL: ${LOG_LEVEL:-debug}
   DATABASE_HOST: db
+  DATABASE_USERNAME_FILE: /run/secrets/pg-user
+  DATABASE_PASSWORD_FILE: /run/secrets/pg-password
+  DATABASE_NAME_FILE: /run/secrets/pg-database
   
 services:
   app:
@@ -30,9 +33,6 @@ services:
       context: .
     environment:
       <<: *shared_environment
-      DATABASE_NAME_FILE: /run/secrets/pg-database
-      DATABASE_USERNAME_FILE: /run/secrets/pg-user
-      DATABASE_PASSWORD_FILE: /run/secrets/pg-password
       AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
       AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
       S3_BUCKET_NAME: 1kbwc-dev
@@ -59,14 +59,15 @@ services:
       - backend
     environment:
       <<: *shared_environment
-      DATABASE_PASSWORD_FILE: /run/secrets/pg-password
     depends_on:
       - db
     command: ["migrate", "--yes"]
     deploy:
       replicas: 0
     secrets:
+      - pg-user
       - pg-password
+      - pg-database
   revert:
     image: 1kbwc:latest
     build:
@@ -75,14 +76,15 @@ services:
       - backend
     environment:
       <<: *shared_environment
-      DATABASE_PASSWORD_FILE: /run/secrets/pg-password
     depends_on:
       - db
     command: ["migrate", "--revert", "--yes"]
     deploy:
       replicas: 0
     secrets:
+      - pg-user
       - pg-password
+      - pg-database
   db:
     image: postgres:14-alpine
     networks:
