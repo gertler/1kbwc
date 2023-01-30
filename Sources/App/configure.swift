@@ -10,18 +10,11 @@ public func configure(_ app: Application) throws {
     
     // Get the db credentials from environment variables
     // This is done this way to work with docker compose secrets, which reads from files, not Strings
-    let dbUsernameFilename = Environment.get("DATABASE_USERNAME_FILE") ?? ""
-    let dbUsernameFile = URL.init(fileURLWithPath: dbUsernameFilename)
-    let dbUsername = try String.init(contentsOf: dbUsernameFile)
-    
-    let dbPasswordFilename = Environment.get("DATABASE_PASSWORD_FILE") ?? ""
-    let dbPasswordFile = URL.init(fileURLWithPath: dbPasswordFilename)
-    let dbPassword = try String.init(contentsOf: dbPasswordFile)
-    
-    let dbNameFilename = Environment.get("DATABASE_NAME_FILE") ?? ""
-    let dbNameFile = URL.init(fileURLWithPath: dbNameFilename)
-    let dbName = try String.init(contentsOf: dbNameFile)
+    let dbUsername = try Environment.unwrapSecretFile("DATABASE_USERNAME_FILE")
+    let dbPassword = try Environment.unwrapSecretFile("DATABASE_PASSWORD_FILE")
+    let dbName = try Environment.unwrapSecretFile("DATABASE_NAME_FILE")
 
+    //
     app.databases.use(.postgres(
         hostname: Environment.get("DATABASE_HOST") ?? "",
         port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? PostgresConfiguration.ianaPortNumber,
@@ -34,6 +27,7 @@ public func configure(_ app: Application) throws {
 
     app.views.use(.leaf)
     app.passwords.use(.bcrypt)
+    app.middleware.use(app.sessions.middleware)
 //    app.routes.defaultMaxBodySize = "16kb"
 
     // register routes
@@ -41,6 +35,7 @@ public func configure(_ app: Application) throws {
 }
 
 private func addMigrations(app: Application) {
-    app.migrations.add(CreateCard())
-    app.migrations.add(CreateUser())
+    for migration in Migrations.shared {
+        app.migrations.add(migration)
+    }
 }

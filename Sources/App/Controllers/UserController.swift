@@ -9,6 +9,8 @@ import Fluent
 import Vapor
 
 struct UserController: RouteCollection {
+    private let app: Application
+    
     func boot(routes: RoutesBuilder) throws {
         let users = routes.grouped("users")
         users.get(use: index)
@@ -16,23 +18,55 @@ struct UserController: RouteCollection {
         users.group(":userID") { user in
             user.delete(use: delete)
         }
+        
+        let passwordProtected = users.grouped(User.authenticator())
+        passwordProtected.post("login", use: login)
+        
+        let protected = users.grouped([
+            app.sessions.middleware,
+            User.sessionAuthenticator(),
+            UserToken.authenticator(),
+            User.redirectMiddleware(path: "/")
+        ])
+        protected.get("me", use: me)
+    }
+    
+    func login(req: Request) async throws -> UserToken.Public {
+        req.logger.debug("Attempting to authenticate login user")
+        let user = try req.auth.require(User.self)
+        req.logger.debug("Successfully authenticated user: \(user.username)")
+        req.logger.debug("Attempting to generate a user token")
+        let token = try user.generateToken(logger: req.logger)
+        try await token.save(on: req.db)
+        req.logger.debug("Successfully saved a new user token: \(token.value)")
+        return UserToken.Public.init(token)
     }
 
-    func index(req: Request) async throws -> [UserPublic] {
+    func index(req: Request) async throws -> [User.Public] {
         let users = try await User.query(on: req.db).all()
-        return users.map { UserPublic($0) }
+        return users.map { User.Public($0) }
+    }
+    
+    func me(req: Request) async throws -> User.Public {
+        let user = try req.auth.require(User.self)
+        return User.Public.init(user)
     }
 
-    func create(req: Request) async throws -> UserPublic {
-        let userPublic = try req.content.decode(UserPublic.self)
-        guard let pwd = userPublic.password else {
-            throw Abort(.badRequest)
+    func create(req: Request) async throws -> User.Public {
+        // Run validations declared in UserAuthentication.swift
+        try User.Create.validate(content: req)
+        // Decode create-user request as User.Create struct
+        let create = try req.content.decode(User.Create.self)
+        // Test if password and confirmPassword match; otherwise, send error
+        guard create.password == create.confirmPassword else {
+            throw Abort(.badRequest, reason: "Passwords did not match")
         }
         
-        let digest = try req.password.hash(pwd)
-        let user = User(username: userPublic.username, passwordHash: digest)
+        // Let Fluent and Vapor handle password storage
+        let digest = try req.password.hash(create.password)
+        let user = User(username: create.username, passwordHash: digest)
         try await user.save(on: req.db)
-        return UserPublic(user)
+        return User.Public.init(user)
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
@@ -41,5 +75,9 @@ struct UserController: RouteCollection {
         }
         try await user.delete(on: req.db)
         return .noContent
+    }
+    
+    init(_ app: Application) {
+        self.app = app
     }
 }

@@ -38,17 +38,21 @@ final class User: Model, Content {
     
 }
 
-final class UserPublic: Content {
-    var id: UUID?
-    var username: String
-    var password: String?
-    var createdAt: Date?
-    var updatedAt: Date?
-    
-    init(_ user: User) {
-        self.id = user.id
-        self.username = user.username
-        self.createdAt = user.createdAt
-        self.updatedAt = user.updatedAt
+// Declare Data Transferrable Objects
+// https://docs.vapor.codes/fluent/model/#data-transfer-object
+extension User {
+    /// DTO to be sent to the client that hides information like the password hash
+    struct Public: Content {
+        var id: UUID?
+        var username: String
+        var createdAt: Date?
+        var updatedAt: Date?
+        
+        init(_ user: User) {
+            self.id = user.id
+            self.username = user.username
+            self.createdAt = user.createdAt
+            self.updatedAt = user.updatedAt
+        }
     }
 }

@@ -3,7 +3,7 @@ import Vapor
 
 func routes(_ app: Application) throws {
     app.get { req async throws in
-        try await req.view.render("index", ["title": "Hello Index!"])
+        try await req.view.render("index", ["title": "Welcome"])
     }
     
     app.get("create") { req async throws in
@@ -11,5 +11,5 @@ func routes(_ app: Application) throws {
     }
 
     try app.register(collection: CardController())
-    try app.register(collection: UserController())
+    try app.register(collection: UserController(app))
 }
