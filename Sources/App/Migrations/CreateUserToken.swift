@@ -15,6 +15,7 @@ extension UserToken {
             try await database.schema(UserToken.schema)
                 .id()
                 .field("value", .string, .required)
+                .field("issued_at", .datetime)
                 .field("user_id", .uuid, .required, .references(User.schema, .id))
                 .unique(on: "value")
                 .create()

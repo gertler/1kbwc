@@ -65,6 +65,10 @@ final class UserToken: Model, Content {
     
     @Field(key: "value")
     var value: String
+    
+    // When this UserToken was created.
+    @Timestamp(key: "issued_at", on: .create)
+    var issuedAt: Date?
 
     @Parent(key: "user_id")
     var user: User
@@ -99,7 +103,10 @@ extension UserToken: ModelTokenAuthenticatable {
     static var userKey = \UserToken.$user
     
     var isValid: Bool {
-        true
+        guard let timeSince = self.issuedAt?.timeIntervalSinceNow else {
+            return false
+        }
+        return abs(timeSince) < 15 // 15 seconds
     }
 }
 

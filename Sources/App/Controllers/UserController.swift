@@ -26,7 +26,8 @@ struct UserController: RouteCollection {
             app.sessions.middleware,
             User.sessionAuthenticator(),
             UserToken.authenticator(),
-            User.redirectMiddleware(path: "/")
+//            User.redirectMiddleware(path: "/")
+            User.guardMiddleware()
         ])
         protected.get("me", use: me)
     }

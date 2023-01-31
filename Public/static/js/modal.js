@@ -19,6 +19,7 @@ class Modal {
 
         // Set header
         header.appendChild(closeButton);
+        closeButton.innerHTML = "&times;"
         var titleElem = document.createElement("h2");
         titleElem.innerHTML = this.title;
         header.appendChild(titleElem);
@@ -47,5 +48,9 @@ class Modal {
         content.appendChild(body);
         this.div.appendChild(content);
         
+    }
+
+    dismiss() {
+        this.div.style.display = "none";
     }
 }

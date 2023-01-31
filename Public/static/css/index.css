@@ -1,23 +1,11 @@
-* {box-sizing: border-box}
-
 /* Full-width input fields */
 input[type=text], input[type=password] {
   width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
+  padding: 12px 20px;
+  margin: 8px 0;
   display: inline-block;
-  border: none;
-  background: #fefefe;
-}
-
-input[type=text]:focus, input[type=password]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-hr {
-  border: 1px solid #fefefe;
-  margin-bottom: 25px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
 /* Set a style for all buttons */
@@ -29,25 +17,26 @@ button {
   border: none;
   cursor: pointer;
   width: 100%;
-  opacity: 0.9;
 }
 
 button:hover {
-  opacity:1;
+  opacity: 0.8;
 }
 
-.signup-button {
-  width: 50%;
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44444;
 }
 
-/* Add padding to container elements */
 .container {
   padding: 16px;
 }
 
-/* Change styles for cancel button and signup button on extra small screens */
+/* Change styles for span and cancel button on extra small screens */
 @media screen and (max-width: 300px) {
-  .signup-button {
+  .cancelbtn {
      width: 100%;
   }
 }

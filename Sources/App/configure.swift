@@ -2,6 +2,7 @@ import Fluent
 import FluentPostgresDriver
 import Leaf
 import Vapor
+import QueuesRedisDriver
 
 // configures your application
 public func configure(_ app: Application) throws {
@@ -14,7 +15,8 @@ public func configure(_ app: Application) throws {
     let dbPassword = try Environment.unwrapSecretFile("DATABASE_PASSWORD_FILE")
     let dbName = try Environment.unwrapSecretFile("DATABASE_NAME_FILE")
 
-    //
+    // PostgreSQL Database Connection
+    app.logger.notice("Attempting to connect to database")
     app.databases.use(.postgres(
         hostname: Environment.get("DATABASE_HOST") ?? "",
         port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? PostgresConfiguration.ianaPortNumber,
@@ -22,15 +24,28 @@ public func configure(_ app: Application) throws {
         password: dbPassword,
         database: dbName
     ), as: .psql)
+    app.logger.debug("Successfully connected to database")
 
+    // Database Migrations
     addMigrations(app: app)
+    
+    // Redis Connection (for Queue Jobs)
+    app.logger.notice("Attempting to connect to redis for queues driver")
+    app.queues.use(.redis(try RedisConfiguration(
+        hostname: Environment.get("REDIS_HOST") ?? "",
+        port: Environment.get("REDIS_PORT").flatMap(Int.init(_:)) ?? RedisConnection.Configuration.defaultPort
+    )))
+    app.logger.debug("Successfully connected to redis")
 
+    // Additional Configuration
     app.views.use(.leaf)
     app.passwords.use(.bcrypt)
     app.middleware.use(app.sessions.middleware)
-//    app.routes.defaultMaxBodySize = "16kb"
+    app.queues.schedule(CleanupUserTokensJob())
+        .daily()
+        .at(.midnight)
 
-    // register routes
+    // Register Routes
     try routes(app)
 }
 
