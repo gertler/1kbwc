@@ -56,7 +56,7 @@ struct UserController: RouteCollection {
 
     func index(req: Request) async throws -> [User.Public] {
         let users = try await User.query(on: req.db).all()
-        return users.map { User.Public($0) }
+        return users.map { User.Public.init($0) }
     }
     
     func me(req: Request) async throws -> User.Public {
