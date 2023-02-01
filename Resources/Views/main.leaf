@@ -13,6 +13,7 @@
                 <li class="header-list-item"><a class="active" href="/">Home</a></li>
                 #if(user):
                     <li class="header-list-item"><a href="/create">Create</a></li>
+                    <li class="header-list-item"><a href="/my-cards">My Cards</a></li>
                 #endif
                 <li class="header-list-item"><a href="/about">About</a></li>
                 #if(user):

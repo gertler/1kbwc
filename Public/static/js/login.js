@@ -35,12 +35,12 @@ function login(username, password) {
 
         // Re-enable the submit button
         signInButton.disabled = false;
-        signInModal.dismiss();
         
         // Output to window whether upload succeeded
         console.log(this.responseText);
         var obj = JSON.parse(this.responseText);
         if (this.status == 200) {
+            signInModal.dismiss();
             acquireSessionId(obj.token);
         } else {
             window.alert(obj.reason);

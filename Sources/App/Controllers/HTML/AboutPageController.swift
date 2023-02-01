@@ -17,9 +17,14 @@ struct AboutPageController: RouteCollection {
 
     func index(req: Request) async throws -> View {
         let user = req.auth.get(User.self)
-        let context = IndexContext(
+        var publicUser: User.Public?
+        if let _user = user {
+            publicUser = User.Public.init(_user)
+        }
+        
+        let context = AboutContext(
             title: "About",
-            user: user
+            user: publicUser
         )
         return try await req.view.render("about", context)
     }
@@ -31,5 +36,5 @@ struct AboutPageController: RouteCollection {
 
 struct AboutContext: Encodable {
     var title: String
-    var user: User?
+    var user: User.Public?
 }

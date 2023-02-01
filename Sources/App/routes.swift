@@ -15,6 +15,7 @@ func routes(_ app: Application) throws {
 
     try htmlProtected.register(collection: IndexPageController(app))
     try htmlProtected.register(collection: CreatePageController(app))
+    try htmlProtected.register(collection: MyCardsPageController(app))
     try htmlProtected.register(collection: AboutPageController(app))
     try app.register(collection: CardController(app))
     try app.register(collection: UserController(app))

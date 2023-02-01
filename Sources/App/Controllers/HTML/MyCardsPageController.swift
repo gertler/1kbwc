@@ -1,21 +1,22 @@
 //
-//  CreatePageController.swift
+//  MyCardsPageController.swift
 //  
 //
-//  Created by Harrison Gertler on 1/31/23.
+//  Created by Harrison Gertler on 2/1/23.
 //
 
 import Fluent
 import Vapor
 
-struct CreatePageController: RouteCollection {
+struct MyCardsPageController: RouteCollection {
     private let app: Application
     
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped([
             User.redirectMiddleware(path: "/")
         ])
-        protected.get("create", use: index)
+        
+        protected.get("my-cards", use: index)
     }
 
     func index(req: Request) async throws -> View {
@@ -25,11 +26,15 @@ struct CreatePageController: RouteCollection {
             publicUser = User.Public.init(_user)
         }
         
-        let context = CreateContext(
-            title: "Create a Card",
-            user: publicUser
+        let cards = try await Card.query(on: req.db).with(\.$user).all()
+        let publicCards = cards.map({ Card.Public.init($0) })
+        
+        let context = MyCardsContext(
+            title: "My Cards",
+            user: publicUser,
+            cards: publicCards
         )
-        return try await req.view.render("create", context)
+        return try await req.view.render("my-cards", context)
     }
     
     init(_ app: Application) {
@@ -37,7 +42,8 @@ struct CreatePageController: RouteCollection {
     }
 }
 
-struct CreateContext: Encodable {
+struct MyCardsContext: Encodable {
     var title: String
     var user: User.Public?
+    var cards: [Card.Public]?
 }

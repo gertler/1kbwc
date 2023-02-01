@@ -1,0 +1,26 @@
+#extend("main"):
+    #export("head"):
+        <link rel="stylesheet" type="text/css" href="/static/css/my-cards.css">
+
+        <script src="/static/js/my-cards.js"></script>
+    #endexport
+    #export("body"):
+        <h1>#(title)</h1>
+
+        <p> Cards made by #(user.username):</p>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Path</th>
+                <th>Created</th>
+            </tr>
+            #for(card in cards):
+                <tr>
+                    <td>#(card.title)</td>
+                    <td>#(card.s3Filepath)</td>
+                    <td>#date(card.createdAt, "yyyy-MM-dd HH:mm")</td>
+                </tr>
+            #endfor
+        </table>
+    #endexport
+#endextend
