@@ -46,12 +46,5 @@
             <div id="submit-spinner" class="spinner"></div>
             <button id="upload-button" class="upload-button">Upload Card</button>
         </div>
-        </br></br>
-
-        <button id="test-modal-button">Test Modal Open</button>
-        <div id="test-modal">
-            <p>Hello test test</p>
-            <p>World</p>
-        </div>
     #endexport
 #endextend

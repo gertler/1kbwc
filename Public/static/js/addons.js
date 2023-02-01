@@ -49,6 +49,4 @@ function initAddons(canvas) {
     }
 
     initColorPicker(canvas);
-    const testModalButton = document.getElementById("test-modal-button");
-    testModal = new Modal("test-modal", "My Title", testModalButton);
 }
