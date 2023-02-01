@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+        <script src="/static/js/main.js"></script>
         #import("head")
         <title>#(title)</title>
     </head>
@@ -10,10 +11,30 @@
         <header>
             <ul class="header-list">
                 <li class="header-list-item"><a class="active" href="/">Home</a></li>
-                <li class="header-list-item"><a href="/create">Create</a></li>
+                #if(user):
+                    <li class="header-list-item"><a href="/create">Create</a></li>
+                #endif
                 <li class="header-list-item"><a href="/about">About</a></li>
+                #if(user):
+                    <li class="header-list-item header-list-right">
+                        <a href="#"><b>#(user.username)</b></a>
+                    </li>
+                    <form id="logout-form" method="POST" action="/users/logout">
+                        <li class="header-list-item header-list-right">
+                            <a id="logout-button" href="#">Logout</a>
+                        </li>
+                    </form>
+                #endif
             </ul>
         </header>
         #import("body")
+        <script>
+            #if(user):
+                const logoutForm = document.getElementById("logout-form");
+                document.getElementById("logout-button").addEventListener("click", (e) => {
+                    logoutForm.submit();
+                });
+            #endif
+        </script>
     </body>
 </html>

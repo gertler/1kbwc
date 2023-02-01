@@ -11,7 +11,6 @@ function toggleFreeDraw() {
     } else {
         toggleFreeDrawButton.textContent = "Free Draw Disabled"
     }
-    console.log("Test");
 }
 
 function setTitleTextOnCanvas(newText) {

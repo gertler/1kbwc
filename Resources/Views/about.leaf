@@ -1,0 +1,9 @@
+#extend("main"):
+    #export("head"):
+    #endexport
+    #export("body"):
+        <h1>#(title)</h1>
+
+        <p> Made, with love, by Scottie &lt;3</p>
+    #endexport
+#endextend

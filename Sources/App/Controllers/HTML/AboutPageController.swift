@@ -1,30 +1,27 @@
 //
-//  CreatePageController.swift
+//  AboutPageController.swift
 //  
 //
-//  Created by Harrison Gertler on 1/31/23.
+//  Created by Harrison Gertler on 2/1/23.
 //
 
 import Fluent
 import Vapor
 
-struct CreatePageController: RouteCollection {
+struct AboutPageController: RouteCollection {
     private let app: Application
     
     func boot(routes: RoutesBuilder) throws {
-        let protected = routes.grouped([
-            User.redirectMiddleware(path: "/")
-        ])
-        protected.get("create", use: index)
+        routes.get("about", use: index)
     }
 
     func index(req: Request) async throws -> View {
         let user = req.auth.get(User.self)
         let context = IndexContext(
-            title: "Create a Card",
+            title: "About",
             user: user
         )
-        return try await req.view.render("create", context)
+        return try await req.view.render("about", context)
     }
     
     init(_ app: Application) {
@@ -32,7 +29,7 @@ struct CreatePageController: RouteCollection {
     }
 }
 
-struct CreateContext: Encodable {
+struct AboutContext: Encodable {
     var title: String
     var user: User?
 }

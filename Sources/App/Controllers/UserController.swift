@@ -15,9 +15,9 @@ struct UserController: RouteCollection {
         let users = routes.grouped("users")
         users.get(use: index)
         users.post(use: create)
-        users.group(":userID") { user in
-            user.delete(use: delete)
-        }
+//        users.group(":userID") { user in
+//            user.delete(use: delete)
+//        }
         
         let passwordProtected = users.grouped(User.authenticator())
         passwordProtected.post("login", use: login)
@@ -30,6 +30,7 @@ struct UserController: RouteCollection {
             User.guardMiddleware()
         ])
         protected.get("me", use: me)
+        protected.post("logout", use: logout)
     }
     
     func login(req: Request) async throws -> UserToken.Public {
@@ -41,6 +42,16 @@ struct UserController: RouteCollection {
         try await token.save(on: req.db)
         req.logger.debug("Successfully saved a new user token: \(token.value)")
         return UserToken.Public.init(token)
+    }
+    
+    func logout(req: Request) async throws -> Response {
+        guard let user = req.auth.get(User.self) else {
+            throw Abort(.expectationFailed, reason: "User is not logged in")
+        }
+        req.logger.debug("Attempting to logout user: \(user.username)")
+        req.auth.logout(User.self)
+        req.logger.debug("Successfully logged out user: \(user.username)")
+        return req.redirect(to: "/")
     }
 
     func index(req: Request) async throws -> [User.Public] {
