@@ -44,6 +44,8 @@ public func configure(_ app: Application) throws {
     app.queues.schedule(CleanupUserTokensJob())
         .daily()
         .at(.midnight)
+    // Run in-process workers for scheduled jobs
+    try app.queues.startScheduledJobs()
 
     // Register Routes
     try routes(app)
