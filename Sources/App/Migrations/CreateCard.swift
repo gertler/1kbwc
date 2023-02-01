@@ -14,6 +14,7 @@ struct CreateCard: AsyncMigration {
             .field("title", .string, .required)
             .field("s3_filepath", .string)
             .field("created_at", .datetime)
+            .field("user_id", .uuid, .required, .references(User.schema, .id))
             .create()
     }
 
