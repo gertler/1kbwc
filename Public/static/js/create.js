@@ -1,6 +1,8 @@
 var canvas;
 const titleTextTop = 30;
+const rulesTextTop = 350
 var titleText;
+var rulesText;
 var toggleFreeDrawButton;
 
 function toggleFreeDraw() {
@@ -44,6 +46,42 @@ function initTitleText() {
     // });
 }
 
+function initRulesText() {
+    const width = canvas.width - 16;
+    rulesText = new fabric.Textbox("+100 points", { 
+        top: rulesTextTop,
+        textAlign: "center", 
+        width: width,
+        fontFamily: "Arial",
+        fontSize: 48,
+        fontStyle: "bold"
+    });
+    canvas.add(rulesText);
+    rulesText.centerH();
+    rulesText.setCoords();
+    rulesText.selectable = false;
+
+    const titleInput = document.getElementById("rules-input");
+    titleInput.addEventListener('input', (e) => {
+        const text = e.target.value;
+
+        // Dynamic font size
+        if (text.length < 16) {
+            rulesText.fontSize = 48;
+        } else if (text.length < 60) {
+            rulesText.fontSize = 38;
+        } else if (text.length < 160) {
+            rulesText.fontSize = 28;
+        } else {
+            rulesText.fontSize = 18;
+        }
+
+        rulesText.text = text;
+        rulesText.centerH();
+        rulesText.setCoords();
+    });
+}
+
 function init() {
     // const cvs = document.getElementById('canvas');
     canvas = new fabric.Canvas('canvas');
@@ -57,6 +95,7 @@ function init() {
     initSubmit(canvas);
     initAddons(canvas);
     initTitleText();
+    initRulesText();
 }
 
 window.onload = init;
