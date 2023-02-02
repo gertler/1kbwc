@@ -31,7 +31,7 @@ struct CardController: RouteCollection {
     func index(req: Request) async throws -> [Card.Public] {
         // NOTE: .with(\.$user) eager loads that model from the db to access all of User fields when parsing
         let cards = try await Card.query(on: req.db).with(\.$user).all()
-        return cards.map({ Card.Public.init($0) })
+        return try cards.map({ try Card.Public.init($0) })
     }
 
     func create(req: Request) async throws -> Card {

@@ -36,6 +36,7 @@
                     </div>
                 </div>
             </div>
+            <!-- <img src="https://1kbwc-dev.s3.amazonaws.com/2023/02/02/Title With HTML <>(;_18_22_15.png" style="width:200px"></img> -->
             <script>
                 initLogin();
             </script>

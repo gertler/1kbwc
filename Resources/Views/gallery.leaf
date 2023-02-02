@@ -1,0 +1,17 @@
+#extend("main"):
+    #export("head"):
+        <link rel="stylesheet" type="text/css" href="/static/css/gallery.css">
+
+        <script src="/static/js/gallery.js"></script>
+    #endexport
+    #export("body"):
+        <h1>#(title)</h1>
+
+        <p>Here are some example cards made:</p>
+        #for(card in cards):
+            <h3>#(card.title)</h3>
+            <img src="#(card.url)" style="width:200px">
+            </br>
+        #endfor
+    #endexport
+#endextend

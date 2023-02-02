@@ -30,7 +30,7 @@ struct AWSService {
     private var s3: S3?
     
     /// The name of the S3 bucket used to store data
-    private let bucketName: String? = Environment.get("S3_BUCKET_NAME")
+    private static let bucketName: String? = Environment.get("S3_BUCKET_NAME")
     
     /**
      * Attempts to upload a given card with data and title to the configured S3 bucket
@@ -45,9 +45,13 @@ struct AWSService {
         let size = ByteCountFormatter().string(fromByteCount: Int64(cardDataBuffer.readableBytes))
         logger?.debug("Begin to upload file \(key); size: \(size)")
         
+        guard let bucket = AWSService.bucketName else {
+            throw Abort(.internalServerError)
+        }
+        
         let putObjectRequest = S3.PutObjectRequest(
             body: .byteBuffer(cardDataBuffer),
-            bucket: bucketName!,
+            bucket: bucket,
             key: key
         )
         let output = try await s3?.putObject(putObjectRequest)
@@ -83,5 +87,19 @@ extension Request {
     /// A service for connecting to AWS and sending requests
     var awsService: AWSService {
         .init()
+    }
+}
+
+// Parsing public S3 URLs from card names
+extension AWSService {
+    private static var s3URI: String {
+        "s3.amazonaws.com"
+    }
+    
+    static func objectURIFor(_ cardName: String) throws -> String {
+        guard let bucket = AWSService.bucketName else {
+            throw Abort(.internalServerError)
+        }
+        return "https://\(bucket).\(self.s3URI)/\(cardName)"
     }
 }

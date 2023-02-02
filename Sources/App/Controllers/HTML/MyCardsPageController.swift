@@ -20,14 +20,16 @@ struct MyCardsPageController: RouteCollection {
     }
 
     func index(req: Request) async throws -> View {
-        let user = req.auth.get(User.self)
-        var publicUser: User.Public?
-        if let _user = user {
-            publicUser = User.Public.init(_user)
-        }
+        let user = try req.auth.require(User.self)
+        let publicUser = User.Public.init(user)
+        let userID = try user.requireID()
         
-        let cards = try await Card.query(on: req.db).with(\.$user).all()
-        let publicCards = cards.map({ Card.Public.init($0) })
+        let cards = try await Card.query(on: req.db)
+            .join(User.self, on: \Card.$user.$id == \User.$id)
+            .filter(User.self, \.$id == userID)
+            .with(\.$user)
+            .all()
+        let publicCards = try cards.map { try Card.Public.init($0) }
         
         let context = MyCardsContext(
             title: "My Cards",

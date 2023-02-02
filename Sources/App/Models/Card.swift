@@ -44,14 +44,15 @@ extension Card {
     struct Public: Content {
         var id: UUID?
         var title: String
-        var s3Filepath: String?
+        var url: String?
         var createdAt: Date?
         var user: User.Public
         
-        init(_ card: Card) {
+        init(_ card: Card) throws {
             self.id = card.id
             self.title = card.title
-            self.s3Filepath = card.s3Filepath
+            guard let cardName = card.s3Filepath else { throw Abort(.internalServerError) }
+            self.url = try AWSService.objectURIFor(cardName)
             self.createdAt = card.createdAt
             self.user = User.Public.init(card.user)
         }

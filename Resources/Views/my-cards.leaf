@@ -7,7 +7,7 @@
     #export("body"):
         <h1>#(title)</h1>
 
-        <p> Cards made by #(user.username):</p>
+        <p>Cards made by #(user.username):</p>
         <table>
             <tr>
                 <th>Title</th>
@@ -17,7 +17,7 @@
             #for(card in cards):
                 <tr>
                     <td>#(card.title)</td>
-                    <td>#(card.s3Filepath)</td>
+                    <td>#(card.url)</td>
                     <td>#date(card.createdAt, "yyyy-MM-dd HH:mm")</td>
                 </tr>
             #endfor
