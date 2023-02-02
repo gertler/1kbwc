@@ -1,3 +1,28 @@
 table, th, td {
     border:1px solid black;
 }
+
+.delete-button {
+    color: rgb(128, 0, 0);
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.delete-button:hover,
+.delete-button:focus {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+td p {
+    display: inline;
+    vertical-align: middle;
+}
+
+.confirm-deletion-text {
+    color: red;
+    font-weight: bolder;
+    font-style: italic;
+}

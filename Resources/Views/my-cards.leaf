@@ -13,12 +13,14 @@
                 <th>Title</th>
                 <th>Path</th>
                 <th>Created</th>
+                <th>Delete?</th>
             </tr>
             #for(card in cards):
                 <tr>
                     <td>#(card.title)</td>
                     <td>#(card.url)</td>
                     <td>#date(card.createdAt, "yyyy-MM-dd HH:mm")</td>
+                    <td class="delete-cell"><p class="confirm-deletion-text"></p><p class="delete-button">&times;</p></td>
                 </tr>
             #endfor
         </table>
