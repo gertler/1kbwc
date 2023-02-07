@@ -8,7 +8,7 @@
         <h1>#(title)</h1>
 
         <p>Cards made by #(user.username):</p>
-        <table>
+        <table id="my-cards-table">
             <tr>
                 <th>Title</th>
                 <th>Path</th>
@@ -16,7 +16,7 @@
                 <th>Delete?</th>
             </tr>
             #for(card in cards):
-                <tr>
+                <tr class="card-row" name="#(card.id)">
                     <td>#(card.title)</td>
                     <td>#(card.url)</td>
                     <td>#date(card.createdAt, "yyyy-MM-dd HH:mm")</td>

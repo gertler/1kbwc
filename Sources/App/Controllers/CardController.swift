@@ -23,9 +23,7 @@ struct CardController: RouteCollection {
         
         cards.get(use: index)
         protected.on(.POST, body: .collect(maxSize: "1mb"), use: create)
-        cards.group(":cardID") { card in
-            card.delete(use: delete)
-        }
+        protected.delete(":cardID", use: delete)
     }
 
     func index(req: Request) async throws -> [Card.Public] {
@@ -57,9 +55,18 @@ struct CardController: RouteCollection {
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
-        guard let card = try await Card.find(req.parameters.get("cardID"), on: req.db) else {
+        let user = try req.auth.require(User.self)
+        let userID = try user.requireID()
+        
+        guard let id = req.parameters.get("cardID") as UUID?,
+              let card = try await Card.find(id, on: req.db) else {
             throw Abort(.notFound)
         }
+        
+        guard card.$user.id == userID else {
+            throw Abort(.unauthorized)
+        }
+        
         try await card.delete(on: req.db)
         return .noContent
     }
