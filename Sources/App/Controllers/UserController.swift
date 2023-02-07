@@ -19,29 +19,32 @@ struct UserController: RouteCollection {
 //            user.delete(use: delete)
 //        }
         
-        let passwordProtected = users.grouped(User.authenticator())
-        passwordProtected.post("login", use: login)
+        let credentialsProtectedRoute = users.grouped([
+            User.credentialsAuthenticator(),
+        ])
+        credentialsProtectedRoute.post("login", use: login)
         
         let protected = users.grouped([
-            app.sessions.middleware,
-            User.sessionAuthenticator(),
-            UserToken.authenticator(),
-//            User.redirectMiddleware(path: "/")
             User.guardMiddleware()
         ])
         protected.get("me", use: me)
         protected.post("logout", use: logout)
     }
     
-    func login(req: Request) async throws -> UserToken.Public {
+    func login(req: Request) async throws -> Response {
         req.logger.debug("Attempting to authenticate login user")
-        let user = try req.auth.require(User.self)
-        req.logger.debug("Successfully authenticated user: \(user.username)")
-        req.logger.debug("Attempting to generate a user token")
-        let token = try user.generateToken(logger: req.logger)
-        try await token.save(on: req.db)
-        req.logger.debug("Successfully saved a new user token: \(token.value)")
-        return UserToken.Public.init(token)
+        let user = req.auth.get(User.self)
+        
+        if let _user = user {
+            req.logger.debug("Successfully authenticated user: \(_user.username)")
+        } else {
+            req.logger.debug("Failed to authenticate!")
+        }
+//        req.logger.debug("Attempting to generate a user token")
+//        let token = try user.generateToken(logger: req.logger)
+//        try await token.save(on: req.db)
+//        req.logger.debug("Successfully saved a new user token: \(token.value)")
+        return req.redirect(to: "/")
     }
     
     func logout(req: Request) async throws -> Response {

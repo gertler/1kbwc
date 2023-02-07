@@ -31,3 +31,16 @@ li.header-list-item a {
 li.header-list-item a:hover {
     background-color: #107910;
 }
+
+button {
+    background-color: #50a950;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}

@@ -1,6 +1,6 @@
 var canvas;
 const titleTextTop = 30;
-const rulesTextTop = 350
+const rulesTextTop = 450;
 var titleText;
 var rulesText;
 var toggleFreeDrawButton;
@@ -15,12 +15,8 @@ function toggleFreeDraw() {
     }
 }
 
-function setTitleTextOnCanvas(newText) {
-    titleText.text
-}
-
 function initTitleText() {
-    const width = canvas.width - 16;
+    const width = canvas.width - 8;
     titleText = new fabric.Textbox("Sample Title", { 
         top: titleTextTop, 
         textAlign: "center", 
@@ -36,14 +32,11 @@ function initTitleText() {
     const titleInput = document.getElementById("title-input");
     titleInput.addEventListener('input', (e) => {
         titleText.text = e.target.value;
+        titleText.width = width;
+        titleText.bringToFront();
         titleText.centerH();
         titleText.setCoords();
     });
-
-    // titleTextbox.on("selection:cleared", (e) => {
-    //     e.target.centerH();
-    //     e.target.setCoords();
-    // });
 }
 
 function initRulesText() {
@@ -61,22 +54,28 @@ function initRulesText() {
     rulesText.setCoords();
     rulesText.selectable = false;
 
-    const titleInput = document.getElementById("rules-input");
-    titleInput.addEventListener('input', (e) => {
+    const rulesInput = document.getElementById("rules-input");
+    rulesInput.addEventListener('input', (e) => {
         const text = e.target.value;
 
         // Dynamic font size
         if (text.length < 16) {
             rulesText.fontSize = 48;
+            rulesText.top = rulesTextTop;
         } else if (text.length < 60) {
             rulesText.fontSize = 38;
+            rulesText.top = rulesTextTop - 50;
         } else if (text.length < 160) {
             rulesText.fontSize = 28;
+            rulesText.top = rulesTextTop - 100;
         } else {
             rulesText.fontSize = 18;
+            rulesText.top = rulesTextTop - 125;
         }
 
         rulesText.text = text;
+        rulesText.width = width;
+        rulesText.bringToFront();
         rulesText.centerH();
         rulesText.setCoords();
     });
@@ -85,7 +84,6 @@ function initRulesText() {
 function init() {
     // const cvs = document.getElementById('canvas');
     canvas = new fabric.Canvas('canvas');
-    // canvas.renderAll();
     canvas.renderAll();
 
     toggleFreeDrawButton = document.getElementById("toggle-free-draw");

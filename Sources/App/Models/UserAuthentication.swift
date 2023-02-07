@@ -26,7 +26,8 @@ extension User.Create: Validatable {
 }
 
 // Used to perform Basic authentication when logging in a User
-extension User: ModelAuthenticatable {
+extension User: ModelAuthenticatable,
+                ModelCredentialsAuthenticatable {
     static var usernameKey: KeyPath<User, Field<String>> {
         \User.$username
     }

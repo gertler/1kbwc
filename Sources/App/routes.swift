@@ -6,18 +6,16 @@ func routes(_ app: Application) throws {
 //        try await req.view.render("index", ["title": "Welcome"])
 //    }
     
-    let htmlProtected = app.grouped([
-        app.sessions.middleware,
-        User.sessionAuthenticator(),
-        UserToken.authenticator(),
-//        User.redirectMiddleware(path: "/")
-    ])
+//    let htmlProtected = app.grouped([
+//        app.sessions.middleware,
+//        User.sessionAuthenticator(),
+//    ])
 
-    try htmlProtected.register(collection: IndexPageController(app))
-    try htmlProtected.register(collection: CreatePageController(app))
-    try htmlProtected.register(collection: MyCardsPageController(app))
-    try htmlProtected.register(collection: GalleryPageController(app))
-    try htmlProtected.register(collection: AboutPageController(app))
+    try app.register(collection: IndexPageController(app))
+    try app.register(collection: CreatePageController(app))
+    try app.register(collection: MyCardsPageController(app))
+    try app.register(collection: GalleryPageController(app))
+    try app.register(collection: AboutPageController(app))
     try app.register(collection: CardController(app))
     try app.register(collection: UserController(app))
 }
