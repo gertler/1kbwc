@@ -13,15 +13,11 @@ struct CardController: RouteCollection {
     
     func boot(routes: RoutesBuilder) throws {
         let cards = routes.grouped("cards")
+        cards.get(use: index)
         
         let protected = cards.grouped([
-            app.sessions.middleware,
-            User.sessionAuthenticator(),
-            UserToken.authenticator(),
-            User.guardMiddleware()
+            User.redirectMiddleware(path: "/")
         ])
-        
-        cards.get(use: index)
         protected.on(.POST, body: .collect(maxSize: "1mb"), use: create)
         protected.delete(":cardID", use: delete)
     }

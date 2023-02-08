@@ -53,4 +53,8 @@ class Modal {
     dismiss() {
         this.div.style.display = "none";
     }
+
+    display() {
+        this.div.style.display = "block";
+    }
 }

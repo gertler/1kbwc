@@ -15,36 +15,12 @@ struct UserController: RouteCollection {
         let users = routes.grouped("users")
         users.get(use: index)
         users.post(use: create)
-//        users.group(":userID") { user in
-//            user.delete(use: delete)
-//        }
-        
-        let credentialsProtectedRoute = users.grouped([
-            User.credentialsAuthenticator(),
-        ])
-        credentialsProtectedRoute.post("login", use: login)
         
         let protected = users.grouped([
-            User.guardMiddleware()
+            User.redirectMiddleware(path: "/")
         ])
         protected.get("me", use: me)
         protected.post("logout", use: logout)
-    }
-    
-    func login(req: Request) async throws -> Response {
-        req.logger.debug("Attempting to authenticate login user")
-        let user = req.auth.get(User.self)
-        
-        if let _user = user {
-            req.logger.debug("Successfully authenticated user: \(_user.username)")
-        } else {
-            req.logger.debug("Failed to authenticate!")
-        }
-//        req.logger.debug("Attempting to generate a user token")
-//        let token = try user.generateToken(logger: req.logger)
-//        try await token.save(on: req.db)
-//        req.logger.debug("Successfully saved a new user token: \(token.value)")
-        return req.redirect(to: "/")
     }
     
     func logout(req: Request) async throws -> Response {
