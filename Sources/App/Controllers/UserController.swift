@@ -45,9 +45,9 @@ struct UserController: RouteCollection {
 
     func create(req: Request) async throws -> User.Public {
         // Run validations declared in UserAuthentication.swift
-        try User.Create.validate(content: req)
+        try User.Create.validate(query: req)
         // Decode create-user request as User.Create struct
-        let create = try req.content.decode(User.Create.self)
+        let create = try req.query.decode(User.Create.self)
         // Test if password and confirmPassword match; otherwise, send error
         guard create.password == create.confirmPassword else {
             throw Abort(.badRequest, reason: "Passwords did not match")

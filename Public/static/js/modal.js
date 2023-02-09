@@ -31,13 +31,15 @@ class Modal {
         // When user clicks on close button, close modal
         closeButton.onclick = function() {
             _div.style.display = "none";
+            this.#hideOptionalContent(body);
         };
         // When user clicks outside of modal, close modal
-        window.onclick = function(event) {
+        window.addEventListener('click', (event) => {
             if (event.target == _div) {
                 _div.style.display = "none";
+                this.#hideOptionalContent(body);
             }
-        };
+        });
         // When user clicks open button, display modal
         openButton.onclick = function () {
             _div.style.display = "block";
@@ -47,7 +49,7 @@ class Modal {
         content.appendChild(header);
         content.appendChild(body);
         this.div.appendChild(content);
-        
+        this.div.style.display = "none";
     }
 
     dismiss() {
@@ -56,5 +58,12 @@ class Modal {
 
     display() {
         this.div.style.display = "block";
+    }
+
+    #hideOptionalContent(body) {
+        const optionals = body.getElementsByClassName("modal-optional");
+        for (const opt of optionals) {
+            opt.style.display = "none";
+        }
     }
 }

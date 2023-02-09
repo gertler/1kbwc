@@ -4,7 +4,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/modal.css">
         #if(user):
         #else:
-            <script src="/static/js/login.js"></script>
+            <script src="/static/js/login-or-signup.js"></script>
         #endif
         <script src="/static/js/index.js"></script>
         <script src="/static/js/modal.js"></script>
@@ -22,8 +22,10 @@
                 <div class="container">
                     <h4>Sign in with your username and password.</h4>
                     #if(errorMessage):
-                        <span style="color:red;">Login Failed:</span>
-                        <span style="color:red;">#(errorMessage)</span>
+                        <div class="modal-optional">
+                            <span style="color:red;">Login Failed:</span>
+                            <span style="color:red;">#(errorMessage)</span>
+                        </div>
                     #endif
                     <hr>
 
@@ -34,13 +36,45 @@
                         <label for="password"><b>Password</b></label>
                         <input id="password-input" type="password" placeholder="Enter Password" name="password" required>
                         
-                        <p>By creating an account you agree to our <a href="/totallyfaketnpfile" style="color:dodgerblue">Terms & Privacy</a>.</p>
+                        <input type="submit" value="Sign In">
+                    </form>
+                </div>
+            </div>
+
+            </br></br>
+            <span>Or, sign up to start making cards!</span>
+            </br></br>
+
+            <button id="open-sign-up-button" style="width:auto;">Sign Up for an Account</button>
+            <div id="modal-sign-up">
+                <div class="container">
+                    <h4>Signing up is free, and it's what all the cool kids are doing!</h4>
+                    #if(errorMessage):
+                        <div class="modal-optional">
+                            <span style="color:red;">Sign Up Failed:</span>
+                            <span style="color:red;">#(errorMessage)</span>
+                        </div>
+                    #endif
+                    <hr>
+
+                    <form method="POST" action="/users">
+                        <label for="username"><b>Username</b></label>
+                        <input id="username-input" type="text" placeholder="Enter Username" name="username" required>
+
+                        <label for="password"><b>Password</b></label>
+                        <input id="password-input" type="password" placeholder="Enter Password" name="password" required>
+
+                        <label for="password-repeated"><b>Repeat Password</b></label>
+                        <input id="password-repeat-input" type="password" placeholder="Repeat Password" name="password-repeat" required>
+                        
+                        <p>By creating an account you agree to our <a href="/totallyfaketnpfile" style="color:dodgerblue">Terms &amp; Privacy</a>.</p>
                         <input type="submit" value="Sign In">
                     </form>
                 </div>
             </div>
             <script>
                 initLogin();
+                initSignup();
                 #if(errorMessage):
                     signInModal.display();
                 #endif
