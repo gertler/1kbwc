@@ -21,17 +21,21 @@
             <div id="modal-sign-in">
                 <div class="container">
                     <h4>Sign in with your username and password.</h4>
-                    #if(errorMessage):
+                    #if(loginErrorMessage):
                         <div class="modal-optional">
-                            <span style="color:red;">Login Failed:</span>
-                            <span style="color:red;">#(errorMessage)</span>
+                            <span style="color:red;">Sign In Failed:</span>
+                            <span style="color:red;">#(loginErrorMessage)</span>
                         </div>
                     #endif
                     <hr>
 
                     <form method="POST" action="/login">
                         <label for="username"><b>Username</b></label>
-                        <input id="username-input" type="text" placeholder="Enter Username" name="username" required>
+                        <input id="username-input" type="text" placeholder="Enter Username" name="username" required
+                        #if(loginUsernameFieldFill):
+                            value="#(loginUsernameFieldFill)"
+                        #endif
+                        >
 
                         <label for="password"><b>Password</b></label>
                         <input id="password-input" type="password" placeholder="Enter Password" name="password" required>
@@ -49,23 +53,27 @@
             <div id="modal-sign-up">
                 <div class="container">
                     <h4>Signing up is free, and it's what all the cool kids are doing!</h4>
-                    #if(errorMessage):
+                    #if(signupErrorMessage):
                         <div class="modal-optional">
                             <span style="color:red;">Sign Up Failed:</span>
-                            <span style="color:red;">#(errorMessage)</span>
+                            <span style="color:red;">#(signupErrorMessage)</span>
                         </div>
                     #endif
                     <hr>
 
                     <form method="POST" action="/users">
                         <label for="username"><b>Username</b></label>
-                        <input id="username-input" type="text" placeholder="Enter Username" name="username" required>
+                        <input id="username-input" type="text" placeholder="Enter Username" name="username" required
+                        #if(signupUsernameFieldFill):
+                            value="#(signupUsernameFieldFill)"
+                        #endif
+                        >
 
                         <label for="password"><b>Password</b></label>
                         <input id="password-input" type="password" placeholder="Enter Password" name="password" required>
 
                         <label for="password-repeated"><b>Repeat Password</b></label>
-                        <input id="password-repeat-input" type="password" placeholder="Repeat Password" name="password-repeat" required>
+                        <input id="password-repeat-input" type="password" placeholder="Repeat Password" name="confirmPassword" required>
                         
                         <p>By creating an account you agree to our <a href="/totallyfaketnpfile" style="color:dodgerblue">Terms &amp; Privacy</a>.</p>
                         <input type="submit" value="Sign In">
@@ -73,10 +81,13 @@
                 </div>
             </div>
             <script>
-                initLogin();
+                initSignin();
                 initSignup();
-                #if(errorMessage):
+                #if(loginErrorMessage):
                     signInModal.display();
+                #elseif(signupErrorMessage):
+                    signUpModal.display();
+                #else:
                 #endif
             </script>
         #endif

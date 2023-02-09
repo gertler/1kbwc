@@ -4,7 +4,7 @@ var openSignInButton;
 var signUpModal;
 var openSignUpButton;
 
-function initLogin() {
+function initSignin() {
     openSignInButton = document.getElementById("open-sign-in-button");
     signInModal = new Modal("modal-sign-in", "Sign In", openSignInButton);
 }

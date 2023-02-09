@@ -42,9 +42,6 @@ public func configure(_ app: Application) throws {
     app.passwords.use(.bcrypt)
     app.middleware.use(app.sessions.middleware)
     app.middleware.use(User.sessionAuthenticator())
-    app.queues.schedule(CleanupUserTokensJob())
-        .daily()
-        .at(.midnight)
     // Run in-process workers for scheduled jobs
     try app.queues.startScheduledJobs()
 

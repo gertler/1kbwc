@@ -11,7 +11,6 @@ struct Migrations {
     static var shared: [AsyncMigration] {
         [
             User.CreateUser(),
-            UserToken.CreateUserToken(),
             CreateCard(),
         ]
     }

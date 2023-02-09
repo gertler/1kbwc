@@ -43,21 +43,30 @@ struct UserController: RouteCollection {
         return User.Public.init(user)
     }
 
-    func create(req: Request) async throws -> User.Public {
-        // Run validations declared in UserAuthentication.swift
-        try User.Create.validate(query: req)
+    // Used for Web creation
+    func create(req: Request) async throws -> Response {
         // Decode create-user request as User.Create struct
-        let create = try req.query.decode(User.Create.self)
+        let create = try req.content.decode(User.Create.self)
+        
+        // Run validations declared in UserAuthentication.swift
+        do {
+            try User.Create.validate(content: req)
+        } catch let error as AbortError {
+            return try redirectWithParams(req: req, reason: .signupVapor(error.reason), usernameFill: create.username)
+        }
+        
         // Test if password and confirmPassword match; otherwise, send error
         guard create.password == create.confirmPassword else {
-            throw Abort(.badRequest, reason: "Passwords did not match")
+            return try redirectWithParams(req: req, reason: .signupFailedPasswordsMismatch(""), usernameFill: create.username)
         }
         
         // Let Fluent and Vapor handle password storage
         let digest = try req.password.hash(create.password)
         let user = User(username: create.username, passwordHash: digest)
         try await user.save(on: req.db)
-        return User.Public.init(user)
+        // Login user by default
+        req.auth.login(user)
+        return req.redirect(to: "/")
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
@@ -70,5 +79,15 @@ struct UserController: RouteCollection {
     
     init(_ app: Application) {
         self.app = app
+    }
+    
+    private func redirectWithParams(_ to: String = "/",
+                                    req: Request,
+                                    error: Bool = true,
+                                    reason: IndexPageController.IndexRedirectFailureReason,
+                                    usernameFill: String? = nil) throws -> Response {
+        let params = IndexPageController.IndexRedirectFailure(error: error, reason: reason, usernameFill: usernameFill)
+        let queryString = try req.redirectService.extractParams(params: params)
+        return req.redirect(to: "\(to)\(queryString)")
     }
 }
