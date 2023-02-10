@@ -9,10 +9,9 @@ import Fluent
 import Vapor
 
 struct IndexPageController: RouteCollection {
-    private let app: Application
-    
     func boot(routes: RoutesBuilder) throws {
         routes.get(use: index)
+        routes.post("users", use: create)
         
         let credentialsProtectedRoute = routes.grouped([
             User.credentialsAuthenticator(),
@@ -20,6 +19,7 @@ struct IndexPageController: RouteCollection {
         credentialsProtectedRoute.post("login", use: login)
     }
 
+    /// Presents the "/" route (home page) to the user with context parsed from the request query
     func index(req: Request) async throws -> View {
         let user = req.auth.get(User.self)
         var publicUser: User.Public?
@@ -32,7 +32,7 @@ struct IndexPageController: RouteCollection {
             context.user = publicUser
         }
 
-        let failedQuery = try req.query.decode(IndexRedirectFailure.self)
+        let failedQuery = try req.query.decode(IndexRedirectQuery.self)
         if failedQuery.error ?? false {
             switch failedQuery.reason {
             case .loginFailedWrongPassword:
@@ -59,6 +59,7 @@ struct IndexPageController: RouteCollection {
         return try await req.view.render("index", context)
     }
     
+    /// An existing user attempting to login using credentials in the request body using `User.credentialsAuthenticator()`
     func login(req: Request) async throws -> Response {
         req.logger.debug("Attempting to authenticate login user")
         let user = req.auth.get(User.self)
@@ -67,17 +68,48 @@ struct IndexPageController: RouteCollection {
             req.logger.debug("Successfully authenticated user: \(_user.username)")
         } else {
             req.logger.debug("Failed to authenticate!")
+            struct LoginUser: Content { var username: String; var password: String }
             let loginUser = try? req.content.decode(LoginUser.self)
-            let loginFailed = IndexRedirectFailure(error: true, reason: .loginFailedWrongPassword, usernameFill: loginUser?.username)
-            let redirectParams = try req.redirectService.extractParams(params: loginFailed)
-            return req.redirect(to: "/\(redirectParams)")
+            return try redirectWithParams(req: req, reason: .loginFailedWrongPassword, usernameFill: loginUser?.username)
         }
         
         return req.redirect(to: "/")
     }
     
-    init(_ app: Application) {
-        self.app = app
+    /// A new user is signing up via a `User.Create` in the request body
+    func create(req: Request) async throws -> Response {
+        // Decode create-user request as User.Create struct
+        let create = try req.content.decode(User.Create.self)
+        
+        // Run validations declared in UserAuthentication.swift
+        do {
+            try User.Create.validate(content: req)
+        } catch let error as AbortError {
+            return try redirectWithParams(req: req, reason: .signupVapor(error.reason), usernameFill: create.username)
+        }
+        
+        // Test if password and confirmPassword match; otherwise, send error
+        guard create.password == create.confirmPassword else {
+            return try redirectWithParams(req: req, reason: .signupFailedPasswordsMismatch, usernameFill: create.username)
+        }
+        
+        // Let Fluent and Vapor handle password storage
+        let digest = try req.password.hash(create.password)
+        let user = User(username: create.username, passwordHash: digest)
+        try await user.save(on: req.db)
+        // Login user by default
+        req.auth.login(user)
+        return req.redirect(to: "/")
+    }
+    
+    private func redirectWithParams(_ to: String = "/",
+                                    req: Request,
+                                    error: Bool = true,
+                                    reason: IndexRedirectFailureReason,
+                                    usernameFill: String? = nil) throws -> Response {
+        let params = IndexPageController.IndexRedirectQuery(error: error, reason: reason, usernameFill: usernameFill)
+        let queryString = try req.redirectService.extractParams(params: params)
+        return req.redirect(to: "\(to)\(queryString)")
     }
 }
 
@@ -89,67 +121,5 @@ extension IndexPageController {
         var signupErrorMessage: String?
         var loginUsernameFieldFill: String?
         var signupUsernameFieldFill: String?
-    }
-    
-    struct IndexRedirectFailure: Content {
-        var error: Bool?
-        var reason: IndexRedirectFailureReason?
-        var usernameFill: String?
-    }
-    
-    enum IndexRedirectFailureReason: Codable, CustomStringConvertible {
-        var description: String {
-            var desc: String
-            switch self {
-            case .loginFailedWrongPassword:
-                desc = "loginFailedWrongPassword"
-            case .signupFailedPasswordsMismatch:
-                desc = "signupFailedPasswordsMismatch"
-            case .loginVapor(let string):
-                desc = "loginVapor$\(string)"
-            case .signupVapor(let string):
-                desc = "signupVapor$\(string)"
-            }
-            return desc
-        }
-        
-        func encode(to encoder: Encoder) throws {
-            var _container = encoder.singleValueContainer()
-            try _container.encode(self.description)
-        }
-        
-        init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            let string = try container.decode(String.self)
-            
-            if string.hasPrefix("loginVapor$") {
-                let i = string.index(after: string.firstIndex(of: "$")!)
-                let a0 = String.init(string.suffix(from: i))
-                self = .loginVapor(a0)
-            } else if string.hasPrefix("signupVapor$") {
-                let i = string.index(after: string.firstIndex(of: "$")!)
-                let a0 = String.init(string.suffix(from: i))
-                self = .signupVapor(a0)
-            } else {
-                switch string {
-                case IndexRedirectFailureReason.loginFailedWrongPassword.description:
-                    self = .loginFailedWrongPassword
-                case IndexRedirectFailureReason.signupFailedPasswordsMismatch.description:
-                    self = .signupFailedPasswordsMismatch
-                default:
-                    throw DecodingError.keyNotFound(string.codingKey, DecodingError.Context.init(codingPath: container.codingPath, debugDescription: "Unexpected key found, invalid enum value."))
-                }
-            }
-        }
-        
-        case loginFailedWrongPassword
-        case signupFailedPasswordsMismatch
-        case loginVapor(String)
-        case signupVapor(String)
-    }
-    
-    struct LoginUser: Content {
-        var username: String
-        var password: String
     }
 }

@@ -11,7 +11,7 @@ func routes(_ app: Application) throws {
 //        User.sessionAuthenticator(),
 //    ])
 
-    try app.register(collection: IndexPageController(app))
+    try app.register(collection: IndexPageController())
     try app.register(collection: CreatePageController(app))
     try app.register(collection: MyCardsPageController(app))
     try app.register(collection: GalleryPageController(app))
