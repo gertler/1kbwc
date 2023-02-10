@@ -9,8 +9,6 @@ import Fluent
 import Vapor
 
 struct CreatePageController: RouteCollection {
-    private let app: Application
-    
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped([
             User.redirectMiddleware(path: "/")
@@ -30,10 +28,6 @@ struct CreatePageController: RouteCollection {
             user: publicUser
         )
         return try await req.view.render("create", context)
-    }
-    
-    init(_ app: Application) {
-        self.app = app
     }
 }
 

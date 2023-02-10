@@ -9,8 +9,6 @@ import Fluent
 import Vapor
 
 struct GalleryPageController: RouteCollection {
-    private let app: Application
-    
     func boot(routes: RoutesBuilder) throws {
         routes.get("gallery", use: index)
     }
@@ -35,10 +33,6 @@ struct GalleryPageController: RouteCollection {
             cards: cardsPublic
         )
         return try await req.view.render("gallery", context)
-    }
-    
-    init(_ app: Application) {
-        self.app = app
     }
 }
 

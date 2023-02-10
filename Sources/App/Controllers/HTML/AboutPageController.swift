@@ -9,8 +9,6 @@ import Fluent
 import Vapor
 
 struct AboutPageController: RouteCollection {
-    private let app: Application
-    
     func boot(routes: RoutesBuilder) throws {
         routes.get("about", use: index)
     }
@@ -27,10 +25,6 @@ struct AboutPageController: RouteCollection {
             user: publicUser
         )
         return try await req.view.render("about", context)
-    }
-    
-    init(_ app: Application) {
-        self.app = app
     }
 }
 

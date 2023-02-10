@@ -9,8 +9,6 @@ import Fluent
 import Vapor
 
 struct CardController: RouteCollection {
-    private let app: Application
-    
     func boot(routes: RoutesBuilder) throws {
         let cards = routes.grouped("cards")
         cards.get(use: index)
@@ -65,9 +63,5 @@ struct CardController: RouteCollection {
         
         try await card.delete(on: req.db)
         return .noContent
-    }
-    
-    init(_ app: Application) {
-        self.app = app
     }
 }

@@ -9,8 +9,6 @@ import Fluent
 import Vapor
 
 struct MyCardsPageController: RouteCollection {
-    private let app: Application
-    
     func boot(routes: RoutesBuilder) throws {
         let protected = routes.grouped([
             User.redirectMiddleware(path: "/")
@@ -37,10 +35,6 @@ struct MyCardsPageController: RouteCollection {
             cards: publicCards
         )
         return try await req.view.render("my-cards", context)
-    }
-    
-    init(_ app: Application) {
-        self.app = app
     }
 }
 

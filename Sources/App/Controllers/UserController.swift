@@ -9,8 +9,6 @@ import Fluent
 import Vapor
 
 struct UserController: RouteCollection {
-    private let app: Application
-    
     func boot(routes: RoutesBuilder) throws {
         let users = routes.grouped("users")
         users.get(use: index)
@@ -48,9 +46,5 @@ struct UserController: RouteCollection {
         }
         try await user.delete(on: req.db)
         return .noContent
-    }
-    
-    init(_ app: Application) {
-        self.app = app
     }
 }
