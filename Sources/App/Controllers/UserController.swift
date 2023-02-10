@@ -57,7 +57,7 @@ struct UserController: RouteCollection {
         
         // Test if password and confirmPassword match; otherwise, send error
         guard create.password == create.confirmPassword else {
-            return try redirectWithParams(req: req, reason: .signupFailedPasswordsMismatch(""), usernameFill: create.username)
+            return try redirectWithParams(req: req, reason: .signupFailedPasswordsMismatch, usernameFill: create.username)
         }
         
         // Let Fluent and Vapor handle password storage
