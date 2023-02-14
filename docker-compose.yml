@@ -36,7 +36,6 @@ services:
       <<: *shared_environment
       AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
       AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
-      S3_BUCKET_NAME: 1kbwc-dev
     depends_on:
       - db
       - redis

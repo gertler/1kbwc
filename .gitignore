@@ -8,3 +8,6 @@ node_modules/
 # https://stackoverflow.com/questions/48524417/should-the-package-lock-json-file-be-added-to-gitignore
 # Apparently it's recommended to not do this, but in general, it shouldn't matter in our case
 package-lock.json
+
+# Development scripting folder
+dev/

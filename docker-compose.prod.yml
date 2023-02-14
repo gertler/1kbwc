@@ -3,11 +3,13 @@ version: '3.7'
 services:
   app:
     container_name: app-prod
+    env_file:
+      - ./env/.env.prod
   db:
     container_name: db-prod
   nginx:
-    environment:
-      - SERVER_NAME=todo.web.com
+    env_file:
+      - ./env/.env.nginx.prod
     container_name: nginx-prod
   redis:
     container_name: redis-prod
