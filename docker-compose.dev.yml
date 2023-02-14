@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: app-dev
+  db:
+    container_name: db-dev
+  nginx:
+    environment:
+      - SERVER_NAME=localhost
+    container_name: nginx-dev
+  redis:
+    container_name: redis-dev

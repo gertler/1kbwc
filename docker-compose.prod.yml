@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: app-prod
+  db:
+    container_name: db-prod
+  nginx:
+    environment:
+      - SERVER_NAME=todo.web.com
+    container_name: nginx-prod
+  redis:
+    container_name: redis-prod

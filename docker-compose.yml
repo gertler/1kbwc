@@ -111,7 +111,6 @@ services:
     image: my-nginx:latest
     build:
       context: ./nginx
-    container_name: nginx
     depends_on:
       - app
     networks:
@@ -122,7 +121,6 @@ services:
       - '80:80'
   redis:
     image: redis:7
-    container_name: redis
     networks:
       - backend
     # Comment out ports to hide service from outside connections
