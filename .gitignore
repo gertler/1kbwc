@@ -11,3 +11,6 @@ package-lock.json
 
 # Development scripting folder
 dev/
+
+# Certbot
+nginx/certbot

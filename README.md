@@ -17,7 +17,7 @@ You'll need a few dependencies before you get started:
   * Mac: Install Docker Desktop (see Docker)
   * Linux:
   ```bash
-  sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose &&
+  sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s | tr '[:upper:]' '[:lower:])-$(uname -m) -o /usr/local/bin/docker-compose &&
   # Set executable permissions
   sudo chmod +x /usr/local/bin/docker-compose &&
   docker-compose version

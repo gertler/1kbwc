@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  certbot:
+    image: certbot/certbot
+    container_name: certbot-certonly
+    # Challenge placed into /var/www/certbot
+    volumes:
+      - ./nginx/certbot:/etc/letsencrypt/
+      - ./nginx/certbot/www:/var/www/certbot
+    # TODO: Fix this for prod
+    # command: certonly --webroot -w /var/www/certbot --force-renewal --email {email} -d {domain} --agree-tos
