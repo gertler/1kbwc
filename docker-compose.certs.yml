@@ -1,5 +1,9 @@
 version: '3.7'
 
+# https://blog.hiimtmac.com/posts/docker-with-nginx-and-letsencrypt/
+# https://testdriven.io/blog/django-lets-encrypt/
+# https://www.programonaut.com/setup-ssl-with-docker-nginx-and-lets-encrypt/
+
 services:
   certbot:
     image: certbot/certbot

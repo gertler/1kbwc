@@ -13,4 +13,5 @@ package-lock.json
 dev/
 
 # Certbot
-nginx/certbot
+nginx/certbot/*
+!nginx/certbot/.gitkeep
