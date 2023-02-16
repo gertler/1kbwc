@@ -1,3 +1,4 @@
+# https://ssl-config.mozilla.org/
 server {
     listen ${HTTP_PORT};
     listen [::]:${HTTP_PORT};
