@@ -33,18 +33,22 @@ extension CardController {
         return key
     }
     
-    func downloadPNG(for req: Request, card: Card) async throws -> Data {
+    func downloadPNG(for req: Request, card: Card) async throws -> ByteBuffer {
         guard let cardKey = card.s3Filepath else {
-            throw Abort(.expectationFailed, reason: "Card has no file data saved!")
+            throw Abort(.expectationFailed, reason: "Card has no file data saved")
         }
         
+        req.logger.debug("Requesting file \(cardKey) from S3")
         let getObjectRequest = S3.GetObjectRequest(
             bucket: req.aws.s3Bucket,
             key: cardKey
         )
         let response = try await req.aws.s3.getObject(getObjectRequest)
-        let bodyData = response.body?.asData()
-        return bodyData ?? Data.init()
+        guard let bodyBuf = response.body?.asByteBuffer() else {
+            throw Abort(.expectationFailed, reason: "Card file is corrupted")
+        }
+        req.logger.debug("Successfully obtained card from S3!")
+        return bodyBuf
     }
     
     /**
@@ -65,14 +69,14 @@ extension CardController {
 }
 
 // Parsing public S3 URLs from card names
-extension Request {
+extension Request.AWS {
     private static var s3URI: String {
         "s3.amazonaws.com"
     }
     
     func objectURIFor(_ cardName: String) throws -> URL {
-        let bucket = self.aws.s3Bucket
-        guard var url = URL(string: "https://\(bucket).\(Request.s3URI)") else {
+        let bucket = self.s3Bucket
+        guard var url = URL(string: "https://\(bucket).\(Request.AWS.s3URI)") else {
             throw Abort(.internalServerError)
         }
         url.appendPathComponent(cardName)

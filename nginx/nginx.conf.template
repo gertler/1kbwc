@@ -1,3 +1,6 @@
+# https://www.nginx.com/blog/rate-limiting-nginx/
+limit_req_zone $binary_remote_addr zone=limit_cards:10m rate=2r/m;
+
 # https://ssl-config.mozilla.org/
 server {
     listen ${HTTP_PORT};
@@ -35,6 +38,11 @@ server {
 
     # HSTS (ngx_http_headers_module is required) (63072000 seconds)
     add_header Strict-Transport-Security "max-age=63072000" always;
+
+    location /cards/ {
+        limit_req zone=limit_cards burst=10 nodelay;
+        try_files $uri @proxy;
+    }
 
     location / {
         try_files $uri @proxy;

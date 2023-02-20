@@ -10,7 +10,7 @@
         <p>Here are some example cards made:</p>
         #for(card in cards):
             <h3>#(card.title)</h3>
-            <img src="#(card.url)" style="width:200px">
+            <img src="/cards/#(card.id)" style="width:200px">
             </br>
         #endfor
     #endexport

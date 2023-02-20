@@ -51,21 +51,15 @@ struct CardController: RouteCollection {
         return card
     }
     
-    func cardImage(req: Request) async throws -> ClientResponse {
+    func cardImage(req: Request) async throws -> Response {
         guard let id = req.parameters.get("cardID") as UUID?,
-              let card = try await Card.find(id, on: req.db),
-              let s3Filepath = card.s3Filepath else {
+              let card = try await Card.find(id, on: req.db) else {
             throw Abort(.notFound)
         }
         
-        req.logger.debug("s3Filepath: \(s3Filepath)")
-        let url = try req.objectURIFor(s3Filepath)
-
-        req.logger.debug("Unsigned URL for card image: \(url.absoluteString)")
-        let signedURL = try await req.aws.s3.signURL(url: url, httpMethod: .GET, expires: .hours(1))
-        req.logger.debug("Signed URL for card image: \(signedURL.absoluteString)")
-        let response = try await req.client.get("\(signedURL.absoluteString)")
-        req.logger.debug("Response: \(response.status)")
+        let buf = try await downloadPNG(for: req, card: card)
+        let response = Response(status: .ok,
+                                body: .init(buffer: buf))
         return response
     }
 
