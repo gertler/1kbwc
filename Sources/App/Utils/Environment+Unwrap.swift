@@ -8,6 +8,14 @@
 import Vapor
 
 extension Environment {
+    
+    private static func unwrapSecretFile(_ envVar: String) throws -> String {
+        let filename = self.get(envVar) ?? ""
+        let file = URL.init(fileURLWithPath: filename)
+        let contents = try String.init(contentsOf: file)
+        return contents
+    }
+    
     /**
      * Unwrap a given environment variable that points to a file path and return the file's contents as a String
      *
@@ -19,10 +27,7 @@ extension Environment {
      * - parameter envVar:  The environment variable to be read
      * - returns:           A String containing the contents of the file whose path was read from the passed-in environment variable
      */
-    static func unwrapSecretFile(_ envVar: String) throws -> String {
-        let filename = self.get(envVar) ?? ""
-        let file = URL.init(fileURLWithPath: filename)
-        let contents = try String.init(contentsOf: file)
-        return contents
+    static func unwrapSecretFile(_ envVar: Key) throws -> String {
+        try unwrapSecretFile(envVar.rawValue)
     }
 }

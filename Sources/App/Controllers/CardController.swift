@@ -39,7 +39,8 @@ struct CardController: RouteCollection {
             req.logger.warning("No body data in request")
             throw Abort(.badRequest)
         }
-        let key = try await req.awsService.uploadPNG(cardDataBuffer, cardTitle: card.title, logger: req.logger)
+        
+        let key = try await uploadPNG(for: req, data: cardDataBuffer, cardTitle: card.title)
         card.s3Filepath = key
         
         // Try to save card in db
