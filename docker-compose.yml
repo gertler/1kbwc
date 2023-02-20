@@ -22,12 +22,12 @@ volumes:
 x-shared_environment: &shared_environment
   LOG_LEVEL: ${LOG_LEVEL:-debug}
   DATABASE_HOST: db
+  REDIS_HOST: redis
   DATABASE_USERNAME_FILE: /run/secrets/pg-user
   DATABASE_PASSWORD_FILE: /run/secrets/pg-password
   DATABASE_NAME_FILE: /run/secrets/pg-database
   AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
   AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
-  REDIS_HOST: redis
   
 services:
   app:
@@ -52,6 +52,7 @@ services:
       - pg-database
       - aws-access-key
       - aws-secret-access-key
+  # Run db migrations (docker-compose run migrate)
   migrate:
     image: 1kbwc:latest
     build:
@@ -72,6 +73,7 @@ services:
       - pg-database
       - aws-access-key
       - aws-secret-access-key
+  # Revert db migrations (docker-compose run revert)
   revert:
     image: 1kbwc:latest
     build:
@@ -84,6 +86,22 @@ services:
       - db
       - redis
     command: ["migrate", "--revert", "--yes"]
+    deploy:
+      replicas: 0
+    secrets:
+      - pg-user
+      - pg-password
+      - pg-database
+      - aws-access-key
+      - aws-secret-access-key
+  # Runs the "routes" command on vapor, which prints out all API routes in a table
+  routes:
+    image: 1kbwc:latest
+    build:
+      context: .
+    environment:
+      <<: *shared_environment
+    command: ["routes"]
     deploy:
       replicas: 0
     secrets:
