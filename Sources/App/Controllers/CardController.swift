@@ -7,11 +7,13 @@
 
 import Fluent
 import Vapor
+import SotoCore
 
 struct CardController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let cards = routes.grouped("cards")
         cards.get(use: index)
+        cards.get(":cardID", use: cardImage)
         
         let protected = cards.grouped([
             User.redirectMiddleware(path: "/")
@@ -48,6 +50,24 @@ struct CardController: RouteCollection {
         
         return card
     }
+    
+    func cardImage(req: Request) async throws -> ClientResponse {
+        guard let id = req.parameters.get("cardID") as UUID?,
+              let card = try await Card.find(id, on: req.db),
+              let s3Filepath = card.s3Filepath else {
+            throw Abort(.notFound)
+        }
+        
+        req.logger.debug("s3Filepath: \(s3Filepath)")
+        let url = try req.objectURIFor(s3Filepath)
+
+        req.logger.debug("Unsigned URL for card image: \(url.absoluteString)")
+        let signedURL = try await req.aws.s3.signURL(url: url, httpMethod: .GET, expires: .hours(1))
+        req.logger.debug("Signed URL for card image: \(signedURL.absoluteString)")
+        let response = try await req.client.get("\(signedURL.absoluteString)")
+        req.logger.debug("Response: \(response.status)")
+        return response
+    }
 
     func delete(req: Request) async throws -> HTTPStatus {
         let user = try req.auth.require(User.self)
@@ -59,7 +79,7 @@ struct CardController: RouteCollection {
         }
         
         guard card.$user.id == userID else {
-            throw Abort(.unauthorized)
+            throw Abort(.unauthorized, reason: "User is not the card's owner")
         }
         
         try await card.delete(on: req.db)

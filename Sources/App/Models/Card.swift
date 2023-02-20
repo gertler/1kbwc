@@ -51,8 +51,8 @@ extension Card {
         init(_ card: Card) throws {
             self.id = card.id
             self.title = card.title
-            guard let cardName = card.s3Filepath else { throw Abort(.internalServerError) }
-            self.url = try AWSService.objectURIFor(cardName)
+//            guard let cardName = card.s3Filepath else { throw Abort(.internalServerError) }
+//            self.url = try AWSService.objectURIFor(cardName)
             self.createdAt = card.createdAt
             self.user = User.Public.init(card.user)
         }

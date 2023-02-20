@@ -1,8 +1,8 @@
 //
-//  AWSService.swift
+//  CardController+S3.swift
 //  
 //
-//  Created by Harrison Gertler on 1/19/23.
+//  Created by Harrison Gertler on 2/20/23.
 //
 
 import Vapor
@@ -33,6 +33,20 @@ extension CardController {
         return key
     }
     
+    func downloadPNG(for req: Request, card: Card) async throws -> Data {
+        guard let cardKey = card.s3Filepath else {
+            throw Abort(.expectationFailed, reason: "Card has no file data saved!")
+        }
+        
+        let getObjectRequest = S3.GetObjectRequest(
+            bucket: req.aws.s3Bucket,
+            key: cardKey
+        )
+        let response = try await req.aws.s3.getObject(getObjectRequest)
+        let bodyData = response.body?.asData()
+        return bodyData ?? Data.init()
+    }
+    
     /**
      * Formats a given key to prepare for S3 storage
      *
@@ -51,15 +65,17 @@ extension CardController {
 }
 
 // Parsing public S3 URLs from card names
-extension CardController {
+extension Request {
     private static var s3URI: String {
         "s3.amazonaws.com"
     }
     
-    static func objectURIFor(_ cardName: String) throws -> String {
-        guard let bucket = AWSService.bucketName else {
+    func objectURIFor(_ cardName: String) throws -> URL {
+        let bucket = self.aws.s3Bucket
+        guard var url = URL(string: "https://\(bucket).\(Request.s3URI)") else {
             throw Abort(.internalServerError)
         }
-        return "https://\(bucket).\(self.s3URI)/\(cardName)"
+        url.appendPathComponent(cardName)
+        return url
     }
 }
