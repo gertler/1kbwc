@@ -70,13 +70,12 @@ extension CardController {
 
 // Parsing public S3 URLs from card names
 extension Request.AWS {
-    private static var s3URI: String {
-        "s3.amazonaws.com"
+    private var s3URI: String {
+        "s3.\(AWSPartition.aws)"
     }
     
     func objectURIFor(_ cardName: String) throws -> URL {
-        let bucket = self.s3Bucket
-        guard var url = URL(string: "https://\(bucket).\(Request.AWS.s3URI)") else {
+        guard var url = URL(string: "https://\(self.s3Bucket).\(self.s3URI)") else {
             throw Abort(.internalServerError)
         }
         url.appendPathComponent(cardName)

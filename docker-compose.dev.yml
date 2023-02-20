@@ -13,3 +13,27 @@ services:
     container_name: nginx-dev
   redis:
     container_name: redis-dev
+  
+  routes:
+    image: 1kbwc:latest
+    build:
+      context: .
+    env_file:
+      - ./env/.env.dev
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USERNAME_FILE: /run/secrets/pg-user
+      DATABASE_PASSWORD_FILE: /run/secrets/pg-password
+      DATABASE_NAME_FILE: /run/secrets/pg-database
+      AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
+      AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
+      REDIS_HOST: redis
+    deploy:
+      replicas: 0
+    command: ["routes"]
+    secrets:
+      - pg-user
+      - pg-password
+      - pg-database
+      - aws-access-key
+      - aws-secret-access-key

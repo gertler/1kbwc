@@ -25,6 +25,8 @@ x-shared_environment: &shared_environment
   DATABASE_USERNAME_FILE: /run/secrets/pg-user
   DATABASE_PASSWORD_FILE: /run/secrets/pg-password
   DATABASE_NAME_FILE: /run/secrets/pg-database
+  AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
+  AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
   REDIS_HOST: redis
   
 services:
@@ -34,8 +36,6 @@ services:
       context: .
     environment:
       <<: *shared_environment
-      AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
-      AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
     depends_on:
       - db
       - redis
@@ -70,6 +70,8 @@ services:
       - pg-user
       - pg-password
       - pg-database
+      - aws-access-key
+      - aws-secret-access-key
   revert:
     image: 1kbwc:latest
     build:
@@ -88,6 +90,8 @@ services:
       - pg-user
       - pg-password
       - pg-database
+      - aws-access-key
+      - aws-secret-access-key
   db:
     image: postgres:14-alpine
     networks:

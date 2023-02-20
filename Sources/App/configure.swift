@@ -13,9 +13,11 @@ public func configure(_ app: Application) throws {
     
     // Get the db credentials from environment variables
     // This is done this way to work with docker compose secrets, which reads from files, not Strings
-    let dbUsername = try Environment.unwrapSecretFile(.db_user)
-    let dbPassword = try Environment.unwrapSecretFile(.db_pass)
-    let dbName = try Environment.unwrapSecretFile(.db_name)
+    guard let dbUsername = Environment.get(.db_user),
+          let dbPassword = Environment.get(.db_pass),
+          let dbName = Environment.get(.db_name) else {
+        fatalError("Postgres DB credentials are missing. Please provide that information via Environment variables. See README.md.")
+    }
 
     // PostgreSQL Database Connection
     app.logger.notice("Attempting to connect to database")
@@ -47,10 +49,11 @@ public func configure(_ app: Application) throws {
     
     // AWS Configure
     app.aws.client = try generateAWSClient(app: app)
-    app.aws.s3 = S3(client: app.aws.client, region: .useast1)
+    let region = Environment.get(.s3_region).flatMap(Region.init(awsRegionName:)) ?? .useast1
+    app.aws.s3 = S3(client: app.aws.client, region: region)
     app.aws.s3Bucket = Environment.get(.s3_bucket) ?? ""
     if app.aws.s3Bucket.isEmpty {
-        fatalError("S3 Bucket Name is empty. Use application.aws.s3Bucket = ...")
+        fatalError("S3 Bucket Name is missing. Use application.aws.s3Bucket = ...")
     }
 
     // Register Routes
@@ -64,9 +67,13 @@ private func addMigrations(app: Application) {
 }
 
 private func generateAWSClient(app: Application) throws -> AWSClient {
-    let accessKeyID = try Environment.unwrapSecretFile(.aws_key)
-    let secretAccessKey = try Environment.unwrapSecretFile(.aws_secret_key)
+    app.logger.notice("Attempting to create AWS Client via static credentials")
+    guard let accessKeyID = Environment.get(.aws_key),
+          let secretAccessKey = Environment.get(.aws_secret_key) else {
+        fatalError("AWS credentials are missing. Please provide that information via Environment variables. See README.md.")
+    }
     let client = AWSClient(credentialProvider: .static(accessKeyId: accessKeyID, secretAccessKey: secretAccessKey),
                            httpClientProvider: .shared(app.http.client.shared))
+    app.logger.debug("Successfully created AWS Client")
     return client
 }

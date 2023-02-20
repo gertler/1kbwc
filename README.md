@@ -57,6 +57,7 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml \
 
 ## Things I have learned:
 
+* In order to update the Swift version, you need to update the Dockerfile as well as the Package.swift to keep both aligned
 * nginx config MUST be copied to /etc/nginx/templates/default.conf.template
   * Note: using a template makes this write to /etc/nginx/conf.d/default.conf
   * /etc/nginx/conf.d/default.conf is included by the /etc/nginx/nginx.conf
