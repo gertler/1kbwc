@@ -21,5 +21,8 @@ services:
     env_file:
       - ./env/.env.nginx.prod
     container_name: nginx-prod
+    volumes:
+      - ./nginx/certbot:/etc/letsencrypt:ro
+      - ./nginx/certbot/www:/var/www/certbot:ro
   redis:
     container_name: redis-prod

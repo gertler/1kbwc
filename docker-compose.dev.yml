@@ -21,6 +21,9 @@ services:
     env_file:
       - ./env/.env.nginx.dev
     container_name: nginx-dev
+    volumes:
+      - ./nginx/certbot:/etc/letsencrypt:ro
+      - ./nginx/certbot/www:/var/www/certbot:ro
   redis:
     container_name: redis-dev
   

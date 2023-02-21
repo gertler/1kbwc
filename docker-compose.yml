@@ -142,9 +142,6 @@ services:
     ports:
       - '80:80'
       - '443:443'
-    volumes:
-      - ./nginx/certbot:/etc/letsencrypt:ro
-      - ./nginx/certbot/www:/var/www/certbot:ro
   redis:
     image: redis:7
     networks:

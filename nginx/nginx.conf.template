@@ -22,8 +22,8 @@ server {
 
     server_name ${SERVER_NAME};
 
-    ssl_certificate ${SSL_CERT};
-    ssl_certificate_key ${SSL_KEY};
+    ssl_certificate /etc/letsencrypt/${SSL_CERT};
+    ssl_certificate_key /etc/letsencrypt/${SSL_KEY};
     ssl_session_timeout 1d;
     ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
     ssl_session_tickets off;
