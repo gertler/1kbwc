@@ -11,15 +11,15 @@
         <table id="my-cards-table">
             <tr>
                 <th>Title</th>
-                <th>Path</th>
+                <th>URL</th>
                 <th>Created</th>
                 <th>Delete?</th>
             </tr>
             #for(card in cards):
                 <tr class="card-row" name="#(card.id)">
                     <td>#(card.title)</td>
-                    <td>#(card.url)</td>
-                    <td>#date(card.createdAt, "yyyy-MM-dd HH:mm")</td>
+                    <td><a href="/cards/#(card.id)" target="_blank">Open Card in New Tab</a></td>
+                    <td>#date(card.createdAt, "MM/dd/yyyy HH:mm")</td>
                     <td class="delete-cell"><p class="confirm-deletion-text"></p><p class="delete-button">&times;</p></td>
                 </tr>
             #endfor

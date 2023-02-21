@@ -2,8 +2,11 @@ Package.resolved
 .DS_Store
 .swiftpm
 
-secrets/
-env/*.prod
+# Docker secrets/Environment variables
+secrets/*
+!secrets/.gitkeep
+env/*
+!env/.gitkeep
 
 node_modules/
 # https://stackoverflow.com/questions/48524417/should-the-package-lock-json-file-be-added-to-gitignore
