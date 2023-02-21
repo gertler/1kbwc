@@ -9,9 +9,10 @@
 
         <p>Here are some example cards made:</p>
         #for(card in cards):
-            <h3>#(card.title)</h3>
-            <img src="/cards/#(card.id)" style="width:200px">
-            </br>
+            <div class="gallery-card">
+                <h3>#(card.title)</h3>
+                <img src="/cards/#(card.id)" style="width:200px">
+            </div>
         #endfor
     #endexport
 #endextend
