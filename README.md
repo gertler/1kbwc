@@ -1,6 +1,7 @@
 # 1KBWC
 1KBWC is a web server project using Docker and Vapor to build the backend while using services like AWS S3 to collect data.
-For storing persistent data like users, 
+
+For storing persistent data like users, this project uses Postgres DB, running as a Docker container; credentials for creating/connecting to this DB are stored as variables that can be set before running. See [Basic Usage](#basic-usage)
 
 ## Prerequirements
 You'll need a few dependencies before you get started:
@@ -31,6 +32,9 @@ You'll need a few dependencies before you get started:
 
 ## Basic Usage
 ### Step #0 - Environment and Configuration
+You should obtain an SSL (technically TLS, but they're the "same") certificate before running this server. The importance is to encrypt data to and from the web server for security purposes, while also making browsers happier when presenting the website. This can be done in a few ways, but the simplest and cheapest is to use **Let's Encrypt**, which can be accessed via the [Certbot tool](https://certbot.eff.org).
+Place the certs you get from running that tool into the `./nginx/certbot/` folder.
+
 #### Fill in all of your secret information into `./secrets`
 * `pg_database.txt`: The name of your postgres database
 * `pg_user.txt`: The username to connect to your postgres database
@@ -38,9 +42,30 @@ You'll need a few dependencies before you get started:
 * `aws_access_key.txt`: The AWS IAM Role Access Key for S3 read/write
 * `aws_secret_access_key.txt`: The AWS IAM Role Secret Access Key for S3 read/write
 
-#### Fill in environment variables into `.env.*` files
-* `S3_BUCKET_NAME`: The name of the S3 bucket to store files in
-* `SERVER_NAME`: The domain name that resolves to your computer's IP address ("localhost" if running in local development environment)
+#### Fill in environment variables into `env/.env.*` files
+* `.env.prod`
+  * `S3_BUCKET_NAME`: The name of the S3 bucket to store files in
+  * `S3_REGION`: The region for the S3 bucket (i.e., us-east-1)
+* `.env.nginx.prod`
+  * `SERVER_NAME`: The domain name that resolves to your computer's IP address ("localhost" if running in local development environment)
+  * `HTTP_PORT`: The port to use for HTTP traffic (you should choose **80** unless you have a specific reason not to)
+  * `HTTPS_PORT`: The port to use for HTTPS traffic (you should choose **443** unless you have a specific reason not to)
+  * `SSL_CERT`: The **internal** (for the nginx Docker container) path to your SSL certificate; this should be the path to your cert within the `nginx/certbot` folder
+    * Since we are using Docker volumes, nginx/certbot is mapped to `/etc/letsencrypt/`
+    * Example:
+    ```bash
+    # Say your folder structure looks like...
+    ./
+    docker-compose.yml
+    nginx/
+    |  certbot/
+    |  |  my-cert.pem
+    ...
+    # Then, SSL_CERT should be: my-cert.pem
+    # And, the final cert location will be: /etc/letsencrypt/my-cert.pem
+    ```
+  * `SSL_KEY`: The **internal** (for the nginx Docker container) path to your SSL key; the location should be the same as `SSL_CERT` (See above for details)
+
 
 ### Step #1 - Testing the Server Locally
 ```bash
@@ -49,13 +74,50 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml \
 ```
 
 
+## Understanding the Folder Structure
+The root folder of this project contains a lot of subfolders and files. Here are the brief explanations for each file/folder:
+* `env/` stores files like .env.prod or .env.nginx.dev that contain Environment variables read by Docker and used when running containers
+* `nginx/` contains all the configuration needed to manage the nginx reverse-proxy
+* `Public/` is where all static files being served are stored (css, js, favicon.ico, etc.)
+* `Resources/` contains all the dynamic HTML content templates rendered with [Leaf](https://docs.vapor.codes/leaf/getting-started/)
+* `secrets/` is where to put text files containing environment variables for use alongside Docker secrets
+  * See [Docker Swarm Secrets](https://docs.docker.com/engine/swarm/secrets/) and [Docker Secrets with Compose](https://docs.docker.com/compose/compose-file/#secrets)
+* `Sources/` contains all the Swift source code for running the Vapor app including API routes and managing the [ORM](https://en.wikipedia.org/wiki/Object–relational_mapping) between server and database; Vapor's ORM framework of choice is [Fluent](https://docs.vapor.codes/fluent/overview/), which handles data models in a [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) fashion
+* `Tests/` currently sees no use, but is left to make sure Vapor runs smoothly
+* `docker-compose.dev.yml` is the config file for running the app in a development environment; it is NOT meant to be used in production
+* `docker-compose.prod.yml` is the config file for running the app in a production environment
+* `docker-compose.yml` is the config file for each container and helper command (vapor app, nginx, postgres, migrate, etc.)
+* `Dockerfile` is the main Dockerfile used to compile and build the vapor app image
+* `package.json` is the Javascript package file for managing any node.js dependencies used; see [node.js dependencies](#nodejs-dependencies)
 
+
+## Node.js Dependencies?
+As implied by the `package.json` file in the root directory, this project makes *slight* use of node/npm to install some javascript packages locally so they can be referenced later by the frontend. One such package is [fabric.js](http://fabricjs.com), which acts as a wrapper for `<canvas>` tags to allow easy drawing capabilities right on the browser.
+
+Since these packages are equitable to a statically linked library, this means we need to use the dist, or distribution, versions of the package when installed via `npm install`. For instance, plain client-side javascript cannot do something like:
+
+❌
+```js
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
+```
+However, some packages provide an alternative if the user only wants a static javascript file to import instead of using with node. Those packages can be found when running the server in the `/static/` endpoint. For example:
+
+✅
+```html
+<script src="/static/fabric/dist/fabric.js"></script>
+```
+
+### Browserify?
+https://browserify.org
+
+Currently, this project does **NOT** use browserify to allow for easier access to packages. When initially programming this part, I was oblivious to this as an option for essentially adding node-like behavior to client-facing javascript. The intent here would be to allow us to simply `require('<package>');` packages instead of needing to use pre-browser-friendly versions of packages as described above. In the future, if the node dependencies piled up, then this would be good to investigate possibly integrating.
 
 ...
 ...
 ...
 
-## Things I have learned:
+## Random Things I Have Learned:
 
 * In order to update the Swift version, you need to update the Dockerfile as well as the Package.swift to keep both aligned
 * nginx config MUST be copied to /etc/nginx/templates/default.conf.template
