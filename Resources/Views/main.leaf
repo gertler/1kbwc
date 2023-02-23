@@ -15,6 +15,9 @@
                     <li class="header-list-item"><a href="/create">Create</a></li>
                     <li class="header-list-item"><a href="/my-cards">My Cards</a></li>
                 #endif
+                #if(user.isAdmin):
+                    <li class="header-list-item"><a href="/admin">Admin</a></li>
+                #endif
                 <li class="header-list-item"><a href="/gallery">Gallery</a></li>
                 <li class="header-list-item"><a href="/about">About</a></li>
                 #if(user):

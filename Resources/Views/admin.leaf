@@ -1,0 +1,12 @@
+#extend("main"):
+    #export("head"):
+        <link rel="stylesheet" type="text/css" href="/static/css/admin.css">
+
+        <script src="/static/js/admin.js"></script>
+    #endexport
+    #export("body"):
+        <h1>#(title)</h1>
+
+        <p>Use this panel to generate a deck of cards.</p>
+    #endexport
+#endextend

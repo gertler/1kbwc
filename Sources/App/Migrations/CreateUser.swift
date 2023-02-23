@@ -16,6 +16,7 @@ extension User {
                 .id()
                 .field("username", .string, .required)
                 .field("password_hash", .string, .required)
+                .field("user_roles", .uint64, .required)
                 .field("created_at", .datetime)
                 .field("updated_at", .datetime)
                 .unique(on: "username")

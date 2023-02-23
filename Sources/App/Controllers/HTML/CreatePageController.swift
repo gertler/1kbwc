@@ -17,11 +17,8 @@ struct CreatePageController: RouteCollection {
     }
 
     func index(req: Request) async throws -> View {
-        let user = req.auth.get(User.self)
-        var publicUser: User.Public?
-        if let _user = user {
-            publicUser = User.Public.init(_user)
-        }
+        let user = try req.auth.require(User.self)
+        let publicUser = User.Public.init(user)
         
         let context = CreateContext(
             title: "Create a Card",
