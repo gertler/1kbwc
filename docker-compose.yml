@@ -55,38 +55,27 @@ services:
     # user: '0' # uncomment to run as root for testing purposes even though Dockerfile defines 'vapor' user.
     command: ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
     <<: *shared_secrets
+
   # Run db migrations (docker-compose run migrate)
   migrate:
-    image: 1kbwc:latest
-    build:
-      context: .
-    networks:
-      - backend
+    extends:
+      service: app
     environment:
-      <<: *shared_environment
-    depends_on:
-      - db
-      - redis
+      ADMIN_USERNAME_FILE: /run/secrets/admin-user
+      ADMIN_PASSWORD_FILE: /run/secrets/admin-password
     command: ["migrate", "--yes"]
     deploy:
       replicas: 0
-    <<: *shared_secrets
+    secrets:
+      - admin-user
+      - admin-password
+  
   # Revert db migrations (docker-compose run revert)
   revert:
-    image: 1kbwc:latest
-    build:
-      context: .
-    networks:
-      - backend
-    environment:
-      <<: *shared_environment
-    depends_on:
-      - db
-      - redis
+    extends:
+      service: migrate
     command: ["migrate", "--revert", "--yes"]
-    deploy:
-      replicas: 0
-    <<: *shared_secrets
+
   # Runs the "routes" command on vapor, which prints out all API routes in a table
   routes:
     image: 1kbwc:latest
@@ -98,6 +87,8 @@ services:
     deploy:
       replicas: 0
     <<: *shared_secrets
+
+  # Database image based on PostgreSQL
   db:
     image: postgres:14-alpine
     networks:
@@ -116,6 +107,8 @@ services:
       - pg-user
       - pg-password
       - pg-database
+
+  # Nginx image to use as a reverse proxy and helper for TLS
   nginx:
     image: my-nginx:latest
     build:
@@ -130,6 +123,8 @@ services:
     ports:
       - '80:80'
       - '443:443'
+
+  # Redis image for storing queued jobs
   redis:
     image: redis:7
     networks:

@@ -7,21 +7,9 @@ services:
       - ./env/.env.dev
     command: ["serve", "--env", "development", "--hostname", "0.0.0.0", "--port", "8080"]
   migrate:
-    secrets:
-      - admin-user
-      - admin-password
-    environment:
-      ADMIN_USERNAME_FILE: /run/secrets/admin-user
-      ADMIN_PASSWORD_FILE: /run/secrets/admin-password
     env_file:
       - ./env/.env.dev
   revert:
-    secrets:
-      - admin-user
-      - admin-password
-    environment:
-      ADMIN_USERNAME_FILE: /run/secrets/admin-user
-      ADMIN_PASSWORD_FILE: /run/secrets/admin-password
     env_file:
       - ./env/.env.dev
   routes:
