@@ -15,6 +15,7 @@
 
         <label for="title-input">Card Title</label>
         <input id="title-input" type="text">
+        </br>
         <label for="rules-input">Rules Text</label>
         <input id="rules-input" type="text">
         </br></br>

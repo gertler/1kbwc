@@ -1,5 +1,5 @@
 //
-//  CreateCard.swift
+//  CreateCards.swift
 //  
 //
 //  Created by Harrison Gertler on 1/18/23.
@@ -8,7 +8,7 @@
 import Fluent
 
 extension Card {
-    struct CreateCard: AsyncMigration {
+    struct CreateCards: AsyncMigration {        
         func prepare(on database: Database) async throws {
             try await database.schema(Card.schema)
                 .id()

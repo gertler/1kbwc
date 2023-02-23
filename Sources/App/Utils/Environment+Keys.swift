@@ -12,6 +12,9 @@ extension Environment {
     ///
     /// Associated values are booleans for whether the variable is represented as a text file path.
     enum Key: String {
+        case admin_user = "ADMIN_USERNAME_FILE"
+        case admin_pass = "ADMIN_PASSWORD_FILE"
+        
         case db_user = "DATABASE_USERNAME_FILE"
         case db_pass = "DATABASE_PASSWORD_FILE"
         case db_name = "DATABASE_NAME_FILE"
@@ -28,7 +31,13 @@ extension Environment {
         
         func isFile() -> Bool {
             switch self {
-            case .db_user, .db_pass, .db_name, .aws_key, .aws_secret_key:
+            case .admin_user,
+                    .admin_pass,
+                    .db_user,
+                    .db_pass,
+                    .db_name,
+                    .aws_key,
+                    .aws_secret_key:
                 return true
             default:
                 return false

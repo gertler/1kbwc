@@ -10,8 +10,9 @@ import Fluent
 struct Migrations {
     static var shared: [AsyncMigration] {
         [
-            User.CreateUser(),
-            Card.CreateCard()
+            User.CreateUsers(),
+            Card.CreateCards(),
+            Admin.CreateAdmin()
         ]
     }
 }

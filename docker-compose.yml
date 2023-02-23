@@ -142,6 +142,10 @@ networks:
     backend:
 
 secrets:
+  admin-user:
+    file: ./secrets/admin_user.txt
+  admin-password:
+    file: ./secrets/admin_password.txt
   pg-user:
     file: ./secrets/pg_user.txt
   pg-password:
