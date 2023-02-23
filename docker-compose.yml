@@ -28,6 +28,14 @@ x-shared_environment: &shared_environment
   DATABASE_NAME_FILE: /run/secrets/pg-database
   AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
   AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
+
+x-shared_secrets: &shared_secrets
+  secrets:
+    - pg-user
+    - pg-password
+    - pg-database
+    - aws-access-key
+    - aws-secret-access-key
   
 services:
   app:
@@ -46,12 +54,7 @@ services:
 #      - '8080:8080'
     # user: '0' # uncomment to run as root for testing purposes even though Dockerfile defines 'vapor' user.
     command: ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
-    secrets:
-      - pg-user
-      - pg-password
-      - pg-database
-      - aws-access-key
-      - aws-secret-access-key
+    <<: *shared_secrets
   # Run db migrations (docker-compose run migrate)
   migrate:
     image: 1kbwc:latest
@@ -67,12 +70,7 @@ services:
     command: ["migrate", "--yes"]
     deploy:
       replicas: 0
-    secrets:
-      - pg-user
-      - pg-password
-      - pg-database
-      - aws-access-key
-      - aws-secret-access-key
+    <<: *shared_secrets
   # Revert db migrations (docker-compose run revert)
   revert:
     image: 1kbwc:latest
@@ -88,12 +86,7 @@ services:
     command: ["migrate", "--revert", "--yes"]
     deploy:
       replicas: 0
-    secrets:
-      - pg-user
-      - pg-password
-      - pg-database
-      - aws-access-key
-      - aws-secret-access-key
+    <<: *shared_secrets
   # Runs the "routes" command on vapor, which prints out all API routes in a table
   routes:
     image: 1kbwc:latest
@@ -104,12 +97,7 @@ services:
     command: ["routes"]
     deploy:
       replicas: 0
-    secrets:
-      - pg-user
-      - pg-password
-      - pg-database
-      - aws-access-key
-      - aws-secret-access-key
+    <<: *shared_secrets
   db:
     image: postgres:14-alpine
     networks:
