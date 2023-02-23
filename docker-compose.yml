@@ -78,15 +78,11 @@ services:
 
   # Runs the "routes" command on vapor, which prints out all API routes in a table
   routes:
-    image: 1kbwc:latest
-    build:
-      context: .
-    environment:
-      <<: *shared_environment
+    extends:
+      service: app
     command: ["routes"]
     deploy:
       replicas: 0
-    <<: *shared_secrets
 
   # Database image based on PostgreSQL
   db:
