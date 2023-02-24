@@ -36,6 +36,8 @@ You should obtain an SSL (technically TLS, but they're the "same") certificate b
 Place the certs you get from running that tool into the `./nginx/certbot/` folder.
 
 #### Fill in all of your secret information into `./secrets`
+* `admin_user.txt`: The username to be set up as an admin user
+* `admin_password.txt`: The password for the admin user
 * `pg_database.txt`: The name of your postgres database
 * `pg_user.txt`: The username to connect to your postgres database
 * `pg_password.txt`: The password to connect to your postgres database
