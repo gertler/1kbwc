@@ -131,3 +131,4 @@ Currently, this project does **NOT** use browserify to allow for easier access t
     * In a production environment, this vital configuration should force nginx to use our config, even without overriding default.conf
 * Using secrets to hide passwords is fine, but we want our password file to NOT end with a newline
   * For some reason, newlines are very bad in passwords and will result in "password authentication failed for user" errors
+* For TTS JSON, we MUST have the duplicate copies of "CustomDeck" so that images will appear when cards are IN the deck as well as separate entities
