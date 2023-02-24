@@ -25,10 +25,11 @@ struct CustomDeck: Codable {
         let container = try decoder.container(keyedBy: CardIDKey.self)
         var cards: [TTSCard] = []
         for key in container.allKeys {
-            if let cardIDKey = CardIDKey(stringValue: key.stringValue) {
-                let card = try container.decode(TTSCard.self, forKey: cardIDKey)
-                cards.append(card)
+            guard let cardIDKey = CardIDKey(stringValue: key.stringValue) else {
+                throw DecodingError.keyNotFound(key, .init(codingPath: container.codingPath, debugDescription: "No key found for \"cardID\""))
             }
+            let card = try container.decode(TTSCard.self, forKey: cardIDKey)
+            cards.append(card)
         }
         self.cards = cards
     }
@@ -51,8 +52,8 @@ struct TTSCard: Codable {
     var numWidth: Int
     var numHeight: Int
     var backIsHidden: Bool
-    var uniqueBack: Bool
-    var type: Int
+    var uniqueBack: Bool?
+    var type: Int?
     
     private enum CodingKeys: String, CodingKey {
         case faceURL = "FaceURL"

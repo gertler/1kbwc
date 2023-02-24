@@ -10,36 +10,37 @@ import Foundation
 typealias ContainedObject = ObjectState
 
 struct ObjectState: Codable {
-    var guid: String
+    var guid: String?
     var name: String
-    var transform: [String: Float]
+    var transform: Transform
     var nickname: String
     var description: String
-    var gmNotes: String
-    var altLookAngle: [String: Float]
-    var colorDiffuse: [String: Float]
-    var tags: [String]
-    var layoutGroupSortIndex: Int
-    var value: Int
-    var locked: Bool
-    var grid: Bool
-    var snap: Bool
-    var ignoreFoW: Bool
-    var measureMovement: Bool
-    var dragSelectable: Bool
-    var autoraise: Bool
-    var sticky: Bool
-    var tooltip: Bool
-    var gridProjection: Bool
-    var hideWhenFaceDown: Bool
-    var hands: Bool
-    var sidewaysCard: Bool
-    var deckIDs: [Int]
-    var customDeck: CustomDeck
-    var luaScript: String
-    var luaScriptState: String
-    var xmlUI: String
-    var containedObjects: [ContainedObject]
+    var gmNotes: String?
+    var altLookAngle: [String: Float]?
+    var colorDiffuse: [String: Float]?
+    var tags: [String]?
+    var layoutGroupSortIndex: Int?
+    var value: Float?
+    var locked: Bool?
+    var grid: Bool?
+    var snap: Bool?
+    var ignoreFoW: Bool?
+    var measureMovement: Bool?
+    var dragSelectable: Bool?
+    var autoraise: Bool?
+    var sticky: Bool?
+    var tooltip: Bool?
+    var gridProjection: Bool?
+    var cardID: Int?
+    var hideWhenFaceDown: Bool?
+    var hands: Bool?
+    var sidewaysCard: Bool?
+    var deckIDs: [Int]?
+    var customDeck: CustomDeck?
+    var luaScript: String?
+    var luaScriptState: String?
+    var xmlUI: String?
+    var containedObjects: [ContainedObject]?
     
     private enum CodingKeys: String, CodingKey {
         case guid = "GUID"
@@ -63,6 +64,7 @@ struct ObjectState: Codable {
         case sticky = "Sticky"
         case tooltip = "Tooltip"
         case gridProjection = "GridProjection"
+        case cardID = "CardID"
         case hideWhenFaceDown = "HideWhenFaceDown"
         case hands = "Hands"
         case sidewaysCard = "SidewaysCard"
