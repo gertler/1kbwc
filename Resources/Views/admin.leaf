@@ -8,5 +8,11 @@
         <h1>#(title)</h1>
 
         <p>Use this panel to generate a deck of cards.</p>
+        </br>
+
+        
+        <a href="/admin/allCards">
+            <button id="download-all-cards">Download All Cards</button>
+        </a>
     #endexport
 #endextend

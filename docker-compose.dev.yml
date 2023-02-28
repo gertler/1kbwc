@@ -4,26 +4,35 @@ services:
   app:
     container_name: app-dev
     env_file:
-      - ./env/.env.dev
+      - ./env/.env.shared.dev
+      - ./env/.env.vapor.dev
     command: ["serve", "--env", "development", "--hostname", "0.0.0.0", "--port", "8080"]
   migrate:
     env_file:
-      - ./env/.env.dev
+      - ./env/.env.shared.dev
+      - ./env/.env.vapor.dev
   revert:
     env_file:
-      - ./env/.env.dev
+      - ./env/.env.shared.dev
+      - ./env/.env.vapor.dev
   routes:
     env_file:
-      - ./env/.env.dev
+      - ./env/.env.shared.dev
+      - ./env/.env.vapor.dev
   db:
     container_name: db-dev
   nginx:
+    environment:
+      - UPSTREAM=app
+      - UPSTREAM_PORT=8080
     env_file:
+      - ./env/.env.shared.dev
       - ./env/.env.nginx.dev
     container_name: nginx-dev
     volumes:
       - ./nginx/certbot:/etc/letsencrypt:ro
       - ./nginx/certbot/www:/var/www/certbot:ro
+    command: [nginx-debug, '-g', 'daemon off;']
   redis:
     container_name: redis-dev
   

@@ -5,16 +5,16 @@
 //  Created by Harrison Gertler on 2/23/23.
 //
 
-import Foundation
+import Vapor
 
 typealias ContainedObject = ObjectState
 
-struct ObjectState: Codable {
+struct ObjectState: Content {
     var guid: String?
     var name: String
     var transform: Transform
-    var nickname: String
-    var description: String
+    var nickname: String?
+    var description: String?
     var gmNotes: String?
     var altLookAngle: [String: Float]?
     var colorDiffuse: [String: Float]?

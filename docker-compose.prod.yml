@@ -4,21 +4,29 @@ services:
   app:
     container_name: app-prod
     env_file:
-      - ./env/.env.prod
+      - ./env/.env.shared.prod
+      - ./env/.env.vapor.prod
     command: ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
   migrate:
     env_file:
-      - ./env/.env.prod
+      - ./env/.env.shared.prod
+      - ./env/.env.vapor.prod
   revert:
     env_file:
-      - ./env/.env.prod
+      - ./env/.env.shared.prod
+      - ./env/.env.vapor.prod
   routes:
     env_file:
-      - ./env/.env.prod
+      - ./env/.env.shared.prod
+      - ./env/.env.vapor.prod
   db:
     container_name: db-prod
   nginx:
+    environment:
+      - UPSTREAM=app
+      - UPSTREAM_PORT=8080
     env_file:
+      - ./env/.env.shared.prod
       - ./env/.env.nginx.prod
     container_name: nginx-prod
     volumes:

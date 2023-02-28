@@ -5,9 +5,9 @@
 //  Created by Harrison Gertler on 2/23/23.
 //
 
-import Foundation
+import Vapor
 
-struct TTSDeck: Codable {
+struct TTSDeck: Content {
     var saveName: String?
     var date: String?
     var versionNumber: String?

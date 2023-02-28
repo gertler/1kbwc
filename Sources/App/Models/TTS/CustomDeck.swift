@@ -5,9 +5,9 @@
 //  Created by Harrison Gertler on 2/24/23.
 //
 
-import Foundation
+import Vapor
 
-struct CustomDeck: Codable {
+struct CustomDeck: Content {
     var cards: [TTSCard]
     
     private struct CardIDKey: CodingKey {
@@ -45,7 +45,7 @@ struct CustomDeck: Codable {
     }
 }
 
-struct TTSCard: Codable {
+struct TTSCard: Content {
     var cardID: String
     var faceURL: String
     var backURL: String
@@ -65,7 +65,14 @@ struct TTSCard: Codable {
         case type = "Type"
     }
     
-    init(cardID: String, faceURL: String, backURL: String, numWidth: Int, numHeight: Int, backIsHidden: Bool, uniqueBack: Bool, type: Int) {
+    init(cardID: String,
+         faceURL: String,
+         backURL: String,
+         numWidth: Int = 1,
+         numHeight: Int = 1,
+         backIsHidden: Bool = true,
+         uniqueBack: Bool? = nil,
+         type: Int? = nil) {
         self.cardID = cardID
         self.faceURL = faceURL
         self.backURL = backURL
@@ -101,7 +108,7 @@ struct TTSCard: Codable {
         try container.encode(self.numWidth, forKey: .numWidth)
         try container.encode(self.numHeight, forKey: .numHeight)
         try container.encode(self.backIsHidden, forKey: .backIsHidden)
-        try container.encode(self.uniqueBack, forKey: .uniqueBack)
-        try container.encode(self.type, forKey: .type)
+        try container.encodeIfPresent(self.uniqueBack, forKey: .uniqueBack)
+        try container.encodeIfPresent(self.type, forKey: .type)
     }
 }

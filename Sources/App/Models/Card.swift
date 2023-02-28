@@ -54,9 +54,4 @@ extension Card {
             self.user = User.Public.init(card.user)
         }
     }
-    
-    /// DTO sent from the client to create a new Card object
-    struct Create: Content {
-        var title: String
-    }
 }

@@ -30,6 +30,10 @@ struct CardController: RouteCollection {
 
     func create(req: Request) async throws -> Card {
         let cardCreate = try req.query.decode(Card.Create.self)
+        
+        // Validate that the title is not empty
+        try Card.Create.validate(query: req)
+        
         let user = try req.auth.require(User.self)
         guard let userID = user.id else {
             throw Abort(.internalServerError)

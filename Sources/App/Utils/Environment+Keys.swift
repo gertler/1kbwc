@@ -29,6 +29,8 @@ extension Environment {
         case s3_bucket = "S3_BUCKET_NAME"
         case s3_region = "S3_REGION"
         
+        case server_name = "SERVER_NAME"
+        
         func isFile() -> Bool {
             switch self {
             case .admin_user,
