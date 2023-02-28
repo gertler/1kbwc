@@ -27,8 +27,8 @@ function dataURLToBlob(dataURI) {
 
 function validateInput(canvas) {
     const len = titleInput.value.length
-    if (len < 1 || len > 32) {
-        window.alert("Title must be between 1 and 32 characters long!");
+    if (len < 1 || len > 100) {
+        window.alert("Title must be between 1 and 100 characters long!");
         return false;
     }
     if (canvas._objects.length < 5) {

@@ -17,6 +17,6 @@ extension Card {
 // Used to validate the creation of a new Card
 extension Card.Create: Validatable {
     static func validations(_ validations: inout Validations) {
-        validations.add("title", as: String.self, is: .count(1...128))
+        validations.add("title", as: String.self, is: .count(1...100))
     }
 }
