@@ -28,6 +28,8 @@ x-shared_environment: &shared_environment
   DATABASE_NAME_FILE: /run/secrets/pg-database
   AWS_ACCESS_KEY_FILE: /run/secrets/aws-access-key
   AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/aws-secret-access-key
+  S3_BUCKET_NAME: /run/secrets/s3-bucket
+  S3_REGION: /run/secrets/s3-region
 
 x-shared_secrets: &shared_secrets
   secrets:
@@ -36,6 +38,8 @@ x-shared_secrets: &shared_secrets
     - pg-database
     - aws-access-key
     - aws-secret-access-key
+    - s3-bucket
+    - s3-region
   
 services:
   app:
@@ -144,3 +148,7 @@ secrets:
     file: ./secrets/aws_access_key.txt
   aws-secret-access-key:
     file: ./secrets/aws_secret_access_key.txt
+  s3-bucket:
+    file: ./secrets/s3_bucket.txt
+  s3-region:
+    file: ./secrets/s3_region.txt

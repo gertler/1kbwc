@@ -3,6 +3,7 @@ version: '3.7'
 services:
   app:
     container_name: app-prod
+    image: ${ECR_APP_IMAGE}
     env_file:
       - ./env/.env.shared.prod
       - ./env/.env.vapor.prod
@@ -22,13 +23,14 @@ services:
   db:
     container_name: db-prod
   nginx:
+    container_name: nginx-prod
+    image: ${ECR_NGINX_IMAGE}
     environment:
       - UPSTREAM=app
       - UPSTREAM_PORT=8080
     env_file:
       - ./env/.env.shared.prod
       - ./env/.env.nginx.prod
-    container_name: nginx-prod
     volumes:
       - ./nginx/certbot:/etc/letsencrypt:ro
       - ./nginx/certbot/www:/var/www/certbot:ro
