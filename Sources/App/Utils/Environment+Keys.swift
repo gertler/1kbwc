@@ -39,7 +39,9 @@ extension Environment {
                     .db_pass,
                     .db_name,
                     .aws_key,
-                    .aws_secret_key:
+                    .aws_secret_key,
+                    .s3_bucket,
+                    .s3_region:
                 return true
             default:
                 return false
