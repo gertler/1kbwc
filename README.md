@@ -5,7 +5,7 @@ For storing persistent data like users, this project uses Postgres DB, running a
 
 ## Prerequirements
 You'll need a few dependencies before you get started:
-* Docker
+* **Docker**
   * Mac (I recommend just downloading from https://www.docker.com/products/docker-desktop/)
     * Alternative: `brew cask install docker`
   * Linux:
@@ -14,7 +14,7 @@ You'll need a few dependencies before you get started:
   # Allow user to run docker without sudo
   sudo usermod -aG docker $USER
   ```
-* Docker Compose
+* **Docker Compose**
   * Mac: Install Docker Desktop (see Docker)
   * Linux:
   ```bash
@@ -23,10 +23,10 @@ You'll need a few dependencies before you get started:
   sudo chmod +x /usr/local/bin/docker-compose &&
   docker-compose version
   ```
-* Network
+* **Network**
   * Your computer will need to be publicly reachable at ports 80 and 443 for the webserver to work
   * You will also want your domain to be properly setup with a corresponding "A Record" pointing to your public IP Address
-* AWS
+* **AWS**
   * In order to use S3, which is the file storage solution used here, you'll need an AWS account and IAM Role for reading and writing data to an S3 bucket
   * You need an S3 bucket capable of storing your files that will be uploaded
 
